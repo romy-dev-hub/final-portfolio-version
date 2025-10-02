@@ -9,7 +9,7 @@ import { Button } from '@heroui/react'
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number>()
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const mousePositionRef = useRef({ x: -1000, y: -1000 }) // Start off-screen
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -33,9 +33,10 @@ const Hero = () => {
     window.addEventListener('resize', setCanvasSize)
 
     // Grid configuration
-    const gridSize = 40
-    const dotRadius = 1.5
-    const connectionDistance = 80
+    const gridSize = 35
+    const dotRadius = 1.8
+    const connectionDistance = 70
+    const repulsionRadius = 120
     const particles: Array<{
       x: number
       y: number
@@ -61,7 +62,7 @@ const Hero = () => {
             originalY: i * gridSize,
             vx: 0,
             vy: 0,
-            size: dotRadius
+            size: dotRadius + Math.random() * 0.5
           })
         }
       }
@@ -69,16 +70,22 @@ const Hero = () => {
 
     initParticles()
 
-    // Mouse move handler
+    // Mouse move handler - update ref directly
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
-      setMousePosition({
+      mousePositionRef.current = {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top
-      })
+      }
+    }
+
+    // Mouse leave handler - reset mouse position
+    const handleMouseLeave = () => {
+      mousePositionRef.current = { x: -1000, y: -1000 }
     }
 
     canvas.addEventListener('mousemove', handleMouseMove)
+    canvas.addEventListener('mouseleave', handleMouseLeave)
 
     // Animation
     const animate = () => {
@@ -89,40 +96,52 @@ const Hero = () => {
       const secondaryColor = isDark ? '#2A3B2E' : '#A6B28B'
       const accentColor = isDark ? '#E8B896' : '#F5C9B0'
 
+      const mouseX = mousePositionRef.current.x
+      const mouseY = mousePositionRef.current.y
+
       // Update particles
       particles.forEach(particle => {
-        const dx = particle.x - mousePosition.x
-        const dy = particle.y - mousePosition.y
+        const dx = particle.x - mouseX
+        const dy = particle.y - mouseY
         const distance = Math.sqrt(dx * dx + dy * dy)
-        const maxDistance = 120
 
-        if (distance < maxDistance) {
-          const force = (1 - distance / maxDistance) * 2
+        // Mouse repulsion
+        if (distance < repulsionRadius && distance > 0) {
+          const force = (1 - distance / repulsionRadius) * 8
           const angle = Math.atan2(dy, dx)
           
+          // Move away from mouse
           particle.vx += Math.cos(angle) * force
           particle.vy += Math.sin(angle) * force
         }
 
-        // Return to original position
-        const returnSpeed = 0.1
-        particle.vx += (particle.originalX - particle.x) * returnSpeed
-        particle.vy += (particle.originalY - particle.y) * returnSpeed
+        // Return to original position (spring effect)
+        const returnStrength = 0.15
+        particle.vx += (particle.originalX - particle.x) * returnStrength
+        particle.vy += (particle.originalY - particle.y) * returnStrength
 
-        // Apply velocity with friction
-        particle.vx *= 0.85
-        particle.vy *= 0.85
+        // Apply friction
+        const friction = 0.85
+        particle.vx *= friction
+        particle.vy *= friction
+
+        // Update position
         particle.x += particle.vx
         particle.y += particle.vy
 
-        // Draw particle
+        // Draw particle with pulsing effect based on mouse proximity
+        let pulseSize = particle.size
+        if (distance < repulsionRadius) {
+          pulseSize = particle.size * (1 + (1 - distance / repulsionRadius) * 0.5)
+        }
+
         ctx.beginPath()
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
+        ctx.arc(particle.x, particle.y, pulseSize, 0, Math.PI * 2)
         ctx.fillStyle = primaryColor
         ctx.fill()
       })
 
-      // Draw connections
+      // Draw connections between particles
       ctx.strokeStyle = secondaryColor
       ctx.lineWidth = 0.8
 
@@ -136,32 +155,39 @@ const Hero = () => {
 
           if (distance < connectionDistance) {
             const opacity = 1 - (distance / connectionDistance)
-            ctx.globalAlpha = opacity * 0.3
+            ctx.globalAlpha = opacity * 0.4
+            
+            // Make connections more visible when mouse is near
+            const mouseD1 = Math.sqrt(
+              Math.pow(p1.x - mouseX, 2) + Math.pow(p1.y - mouseY, 2)
+            )
+            const mouseD2 = Math.sqrt(
+              Math.pow(p2.x - mouseX, 2) + Math.pow(p2.y - mouseY, 2)
+            )
+            
+            if (mouseD1 < repulsionRadius || mouseD2 < repulsionRadius) {
+              ctx.globalAlpha = opacity * 0.7
+              ctx.lineWidth = 1.2
+            }
+            
             ctx.beginPath()
             ctx.moveTo(p1.x, p1.y)
             ctx.lineTo(p2.x, p2.y)
             ctx.stroke()
+            
+            ctx.lineWidth = 0.8
+            ctx.globalAlpha = 1
           }
         }
       }
 
-      ctx.globalAlpha = 1
-
-      // Draw mouse influence area
-      if (mousePosition.x > 0 && mousePosition.y > 0) {
-        ctx.beginPath()
-        ctx.arc(mousePosition.x, mousePosition.y, 4, 0, Math.PI * 2)
-        ctx.fillStyle = accentColor
-        ctx.fill()
-
-        ctx.beginPath()
-        ctx.arc(mousePosition.x, mousePosition.y, 100, 0, Math.PI * 2)
-        ctx.strokeStyle = accentColor
-        ctx.lineWidth = 0.5
-        ctx.globalAlpha = 0.3
-        ctx.stroke()
-        ctx.globalAlpha = 1
-      }
+      // Draw mouse influence indicator (hidden)
+      // if (mouseX > 0 && mouseY > 0 && mouseX < canvas.width && mouseY < canvas.height) {
+      //   ctx.beginPath()
+      //   ctx.arc(mouseX, mouseY, 4, 0, Math.PI * 2)
+      //   ctx.fillStyle = accentColor
+      //   ctx.fill()
+      // }
 
       animationRef.current = requestAnimationFrame(animate)
     }
@@ -171,23 +197,24 @@ const Hero = () => {
     return () => {
       window.removeEventListener('resize', setCanvasSize)
       canvas.removeEventListener('mousemove', handleMouseMove)
+      canvas.removeEventListener('mouseleave', handleMouseLeave)
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [mousePosition])
+  }, [])
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background dark:bg-dark-background">
       {/* Animated Grid Background */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-60"
+        className="absolute inset-0 w-full h-full opacity-70 cursor-none"
       />
 
       {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-transparent to-accent/5 dark:from-dark-background/80 dark:via-transparent dark:to-dark-accent/5" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent dark:from-dark-background/60" />
+      <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-accent/10 dark:from-dark-background/70 dark:via-transparent dark:to-dark-accent/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent dark:from-dark-background/40" />
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full">
