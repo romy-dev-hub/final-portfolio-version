@@ -90,7 +90,7 @@ const Skills = () => {
               key={category.title}
               variants={itemVariants}
               whileHover={{ scale: 1.05, y: -10 }}
-              className="bg-white dark:bg-dark-secondary rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 border border-secondary/20"
+              className="bg-white dark:bg-dark-secondary rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 border border-secondary/20 dark:border-dark-secondary"
             >
               <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${category.color} text-background mb-6`}>
                 {category.icon}
@@ -104,7 +104,7 @@ const Skills = () => {
                 {category.icons.map((IconComponent, iconIndex) => (
                   <div
                     key={iconIndex}
-                    className="w-10 h-10 rounded-lg bg-background dark:bg-dark-background flex items-center justify-center text-primary dark:text-dark-primary border border-secondary/20"
+                    className="w-10 h-10 rounded-lg bg-background dark:bg-dark-background flex items-center justify-center text-primary dark:text-dark-primary border border-secondary/20 dark:border-dark-secondary"
                   >
                     <IconComponent className="w-6 h-6" />
                   </div>
@@ -145,7 +145,7 @@ const Skills = () => {
                 <span className="font-semibold">{skill.name}</span>
                 <span>{skill.level}%</span>
               </div>
-              <div className="h-3 bg-secondary/30 rounded-full overflow-hidden">
+              <div className="h-3 bg-secondary/30 dark:bg-dark-secondary rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   whileInView={{ width: `${skill.level}%` }}

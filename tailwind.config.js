@@ -19,8 +19,8 @@ module.exports = {
         // Dark mode colors
         dark: {
           primary: '#F9F6F3',    // Light text
-          secondary: '#2A3B2E',  // Dark sage
-          accent: '#F5C9B0',     // Same peach
+          secondary: '#2A3B2E',  // Dark sage for cards
+          accent: '#E8B896',     // Darker peach
           background: '#0A0F0D', // Dark background
         }
       },

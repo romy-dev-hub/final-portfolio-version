@@ -61,9 +61,9 @@ const About = () => {
                 <motion.div
                   key={index}
                   whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 bg-white dark:bg-dark-secondary rounded-2xl shadow-lg border border-secondary/20"
+                  className="text-center p-4 bg-white dark:bg-dark-secondary rounded-2xl shadow-lg border border-secondary/20 dark:border-dark-secondary"
                 >
-                  <div className="flex justify-center mb-2 text-accent">
+                  <div className="flex justify-center mb-2 text-accent dark:text-dark-accent">
                     {stat.icon}
                   </div>
                   <div className="text-2xl font-bold text-primary dark:text-dark-primary mb-1">
@@ -97,7 +97,7 @@ const About = () => {
                 href="mailto:hello@example.com"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center justify-center border-2 border-primary text-primary px-6 py-3 rounded-full font-semibold hover:bg-primary hover:text-background transition-all duration-300"
+                className="flex items-center justify-center border-2 border-primary text-primary dark:text-dark-primary px-6 py-3 rounded-full font-semibold hover:bg-primary hover:text-background transition-all duration-300"
               >
                 <Mail className="mr-2 h-5 w-5" />
                 Get In Touch
@@ -112,12 +112,12 @@ const About = () => {
             transition={{ duration: 0.8 }}
             className="relative"
           >
-            <div className="relative w-full h-96 lg:h-[500px] bg-gradient-to-br from-accent to-secondary rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative w-full h-96 lg:h-[500px] bg-gradient-to-br from-accent to-secondary dark:from-dark-accent dark:to-dark-secondary rounded-3xl overflow-hidden shadow-2xl">
               {/* Animated Background Pattern */}
               <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-10 left-10 w-20 h-20 bg-primary rounded-full animate-float" />
-                <div className="absolute top-32 right-16 w-16 h-16 bg-primary rounded-full animate-float" style={{ animationDelay: '2s' }} />
-                <div className="absolute bottom-20 left-20 w-12 h-12 bg-primary rounded-full animate-float" style={{ animationDelay: '4s' }} />
+                <div className="absolute top-10 left-10 w-20 h-20 bg-primary dark:bg-dark-primary rounded-full animate-float" />
+                <div className="absolute top-32 right-16 w-16 h-16 bg-primary dark:bg-dark-primary rounded-full animate-float" style={{ animationDelay: '2s' }} />
+                <div className="absolute bottom-20 left-20 w-12 h-12 bg-primary dark:bg-dark-primary rounded-full animate-float" style={{ animationDelay: '4s' }} />
               </div>
               
               {/* Center Content */}
@@ -134,8 +134,8 @@ const About = () => {
                   }}
                   className="text-center"
                 >
-                  <div className="w-32 h-32 lg:w-48 lg:h-48 bg-background/20 rounded-3xl backdrop-blur-sm border border-background/30 flex items-center justify-center">
-                    <Code2 className="h-16 w-16 lg:h-24 lg:w-24 text-background" />
+                  <div className="w-32 h-32 lg:w-48 lg:h-48 bg-background/20 dark:bg-dark-background/20 rounded-3xl backdrop-blur-sm border border-background/30 dark:border-dark-background/30 flex items-center justify-center">
+                    <Code2 className="h-16 w-16 lg:h-24 lg:w-24 text-background dark:text-dark-background" />
                   </div>
                 </motion.div>
               </div>
@@ -151,7 +151,7 @@ const About = () => {
                   repeat: Infinity,
                   ease: "linear"
                 }}
-                className="absolute top-8 right-8 w-8 h-8 bg-background/30 rounded-full border border-background/50"
+                className="absolute top-8 right-8 w-8 h-8 bg-background/30 dark:bg-dark-background/30 rounded-full border border-background/50 dark:border-dark-background/50"
               />
               
               <motion.div
@@ -164,7 +164,7 @@ const About = () => {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="absolute bottom-12 left-12 w-6 h-6 bg-background/40 rounded-full border border-background/50"
+                className="absolute bottom-12 left-12 w-6 h-6 bg-background/40 dark:bg-dark-background/40 rounded-full border border-background/50 dark:border-dark-background/50"
               />
             </div>
           </motion.div>
