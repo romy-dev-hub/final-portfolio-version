@@ -32,7 +32,7 @@ const Navbar = () => {
       animate={{ y: 0 }}
       className={`fixed w-full z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-primary/90 dark:bg-dark-primary/90 backdrop-blur-md shadow-lg' 
+          ? 'bg-background/90 dark:bg-dark-background/90 backdrop-blur-md shadow-lg border-b border-secondary/20' 
           : 'bg-transparent'
       }`}
     >
@@ -43,7 +43,7 @@ const Navbar = () => {
             className="flex items-center space-x-2"
           >
             <Code2 className="h-8 w-8 text-accent" />
-            <span className="text-2xl font-bold text-background dark:text-white">
+            <span className="text-2xl font-bold text-primary dark:text-dark-primary">
               Portfolio
             </span>
           </motion.div>
@@ -57,7 +57,7 @@ const Navbar = () => {
                   href={item.href}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="text-background dark:text-white hover:text-accent dark:hover:text-dark-accent px-3 py-2 rounded-md text-lg font-medium transition-colors duration-300"
+                  className="text-primary dark:text-dark-primary hover:text-accent px-3 py-2 rounded-md text-lg font-medium transition-colors duration-300"
                 >
                   {item.name}
                 </motion.a>
@@ -69,7 +69,7 @@ const Navbar = () => {
               isIconOnly
               variant="light"
               onPress={toggleTheme}
-              className="text-background dark:text-white hover:bg-background/20 dark:hover:bg-white/20"
+              className="text-primary dark:text-dark-primary hover:bg-secondary/20 dark:hover:bg-dark-secondary/20"
             >
               {theme === 'light' ? (
                 <Moon className="h-5 w-5" />
@@ -85,7 +85,7 @@ const Navbar = () => {
               isIconOnly
               variant="light"
               onPress={toggleTheme}
-              className="text-background dark:text-white"
+              className="text-primary dark:text-dark-primary"
             >
               {theme === 'light' ? (
                 <Moon className="h-5 w-5" />
@@ -97,7 +97,7 @@ const Navbar = () => {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsOpen(!isOpen)}
-              className="text-background dark:text-white hover:text-accent dark:hover:text-dark-accent focus:outline-none"
+              className="text-primary dark:text-dark-primary hover:text-accent focus:outline-none"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </motion.button>
@@ -112,7 +112,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-primary/95 dark:bg-dark-primary/95 backdrop-blur-md"
+            className="md:hidden bg-background/95 dark:bg-dark-background/95 backdrop-blur-md border-b border-secondary/20"
           >
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {navItems.map((item) => (
@@ -121,7 +121,7 @@ const Navbar = () => {
                   href={item.href}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setIsOpen(false)}
-                  className="text-background dark:text-white hover:text-accent dark:hover:text-dark-accent block px-3 py-2 rounded-md text-base font-medium"
+                  className="text-primary dark:text-dark-primary hover:text-accent block px-3 py-2 rounded-md text-base font-medium"
                 >
                   {item.name}
                 </motion.a>

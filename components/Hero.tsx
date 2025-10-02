@@ -1,96 +1,126 @@
 // components/Hero.tsx
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import * as THREE from 'three'
 import { ChevronDown } from 'lucide-react'
 
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
-    if (!canvasRef.current) return
+    const canvas = canvasRef.current
+    if (!canvas) return
 
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true })
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    // Set canvas size
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    resizeCanvas()
+    window.addEventListener('resize', resizeCanvas)
 
-    // Create floating geometry
-    const geometries = [
-      new THREE.TetrahedronGeometry(1, 0),
-      new THREE.OctahedronGeometry(1.2, 0),
-      new THREE.DodecahedronGeometry(0.8, 0),
-    ]
+    // Mouse move handler
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: e.clientX,
+        y: e.clientY
+      })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
 
-    const material = new THREE.MeshPhongMaterial({
-      color: 0xA6B28B,
-      transparent: true,
-      opacity: 0.6,
-      shininess: 100
-    })
+    // Animation variables
+    const lines: Array<{
+      x: number
+      y: number
+      length: number
+      angle: number
+      speed: number
+      thickness: number
+    }> = []
 
-    const meshes: THREE.Mesh[] = []
-    geometries.forEach((geometry, index) => {
-      const mesh = new THREE.Mesh(geometry, material)
-      mesh.position.x = (Math.random() - 0.5) * 10
-      mesh.position.y = (Math.random() - 0.5) * 10
-      mesh.position.z = (Math.random() - 0.5) * 10
-      scene.add(mesh)
-      meshes.push(mesh)
-    })
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xF9F6F3, 0.6)
-    scene.add(ambientLight)
-    const directionalLight = new THREE.DirectionalLight(0xF5C9B0, 0.8)
-    directionalLight.position.set(5, 5, 5)
-    scene.add(directionalLight)
-
-    camera.position.z = 5
-
-    const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight
-      camera.updateProjectionMatrix()
-      renderer.setSize(window.innerWidth, window.innerHeight)
+    // Create lines
+    for (let i = 0; i < 50; i++) {
+      lines.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        length: Math.random() * 100 + 50,
+        angle: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.02 + 0.01,
+        thickness: Math.random() * 2 + 1
+      })
     }
 
-    window.addEventListener('resize', handleResize)
-
+    // Animation loop
     const animate = () => {
-      requestAnimationFrame(animate)
+      ctx.fillStyle = 'transparent'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      meshes.forEach((mesh, index) => {
-        mesh.rotation.x += 0.01
-        mesh.rotation.y += 0.01
-        mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.01
+      const centerX = canvas.width / 2
+      const centerY = canvas.height / 2
+      const mouseX = mousePosition.x
+      const mouseY = mousePosition.y
+
+      lines.forEach((line, index) => {
+        // Calculate distance from mouse
+        const dx = line.x - mouseX
+        const dy = line.y - mouseY
+        const distance = Math.sqrt(dx * dx + dy * dy)
+
+        // React to mouse proximity
+        const maxDistance = 200
+        const influence = Math.max(0, 1 - distance / maxDistance)
+        
+        // Rotate based on mouse position
+        const targetAngle = Math.atan2(dy, dx) + Math.PI / 2
+        line.angle += (targetAngle - line.angle) * 0.1 * influence
+
+        // Move lines
+        line.x += Math.cos(line.angle) * line.speed
+        line.y += Math.sin(line.angle) * line.speed
+
+        // Wrap around edges
+        if (line.x < -line.length) line.x = canvas.width + line.length
+        if (line.x > canvas.width + line.length) line.x = -line.length
+        if (line.y < -line.length) line.y = canvas.height + line.length
+        if (line.y > canvas.height + line.length) line.y = -line.length
+
+        // Draw line
+        const endX = line.x + Math.cos(line.angle) * line.length
+        const endY = line.y + Math.sin(line.angle) * line.length
+
+        ctx.beginPath()
+        ctx.moveTo(line.x, line.y)
+        ctx.lineTo(endX, endY)
+        ctx.strokeStyle = `rgba(166, 178, 139, ${0.3 + influence * 0.4})` // Secondary color
+        ctx.lineWidth = line.thickness * (1 + influence)
+        ctx.stroke()
       })
 
-      renderer.render(scene, camera)
+      requestAnimationFrame(animate)
     }
 
     animate()
 
     return () => {
-      window.removeEventListener('resize', handleResize)
-      renderer.dispose()
+      window.removeEventListener('resize', resizeCanvas)
+      window.removeEventListener('mousemove', handleMouseMove)
     }
-  }, [])
+  }, [mousePosition])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background dark:bg-dark-background">
+      {/* Animated Canvas Background */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ background: 'transparent' }}
       />
       
-      {/* Background color that changes with theme */}
-      <div className="absolute inset-0 bg-background dark:bg-dark-background transition-colors duration-300" />
-      
+      {/* Content */}
       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -99,18 +129,18 @@ const Hero = () => {
           className="max-w-4xl mx-auto"
         >
           <motion.h1
-            className="text-5xl md:text-7xl font-bold text-primary dark:text-white mb-6"
+            className="text-5xl md:text-7xl font-bold text-primary dark:text-dark-primary mb-6"
             whileHover={{ scale: 1.05 }}
           >
             Creative{' '}
-            <span className="text-accent dark:text-dark-accent">Developer</span>
+            <span className="text-accent">Developer</span>
           </motion.h1>
           
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-xl md:text-2xl text-primary dark:text-gray-300 mb-8 max-w-2xl mx-auto"
+            className="text-xl md:text-2xl text-primary dark:text-dark-primary mb-8 max-w-2xl mx-auto"
           >
             Crafting digital experiences with modern technologies and creative solutions
           </motion.p>
@@ -125,7 +155,7 @@ const Hero = () => {
               href="#projects"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-primary dark:bg-dark-primary text-background dark:text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-primary text-background px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
             >
               View My Work
             </motion.a>
@@ -134,7 +164,7 @@ const Hero = () => {
               href="#about"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="border-2 border-primary dark:border-white text-primary dark:text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary dark:hover:bg-white hover:text-background dark:hover:text-dark-background transition-all duration-300"
+              className="border-2 border-primary text-primary px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary hover:text-background transition-all duration-300"
             >
               About Me
             </motion.a>
@@ -151,7 +181,7 @@ const Hero = () => {
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <ChevronDown className="h-8 w-8 text-primary dark:text-white" />
+            <ChevronDown className="h-8 w-8 text-primary dark:text-dark-primary" />
           </motion.div>
         </motion.div>
       </div>

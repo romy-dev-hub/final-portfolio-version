@@ -11,16 +11,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#1C352D',
-        secondary: '#A6B28B',
-        accent: '#F5C9B0',
-        background: '#F9F6F3',
+        // Your exact color palette
+        primary: '#1C352D',      // Dark Green
+        secondary: '#A6B28B',    // Sage Green  
+        accent: '#F5C9B0',       // Peach
+        background: '#F9F6F3',   // Off-white/Pink
         // Dark mode colors
         dark: {
-          primary: '#0F1F1A',
-          secondary: '#2A3B2E',
-          accent: '#E8B896',
-          background: '#0A0F0D',
+          primary: '#F9F6F3',    // Light text
+          secondary: '#2A3B2E',  // Dark sage
+          accent: '#F5C9B0',     // Same peach
+          background: '#0A0F0D', // Dark background
         }
       },
       animation: {

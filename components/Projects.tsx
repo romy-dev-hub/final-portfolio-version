@@ -63,7 +63,7 @@ const Projects = () => {
   }
 
   return (
-    <section id="projects" className="py-20 bg-primary/5 dark:bg-dark-primary/10">
+    <section id="projects" className="py-20 bg-secondary/10 dark:bg-dark-secondary/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -72,10 +72,10 @@ const Projects = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-white mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-dark-primary mb-4">
             Featured Projects
           </h2>
-          <p className="text-xl text-primary/70 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-xl text-primary/80 dark:text-dark-primary/80 max-w-2xl mx-auto">
             Some of my recent work that showcases my skills and creativity
           </p>
         </motion.div>
@@ -94,13 +94,13 @@ const Projects = () => {
               whileHover={{ scale: 1.05, y: -10 }}
               onHoverStart={() => setHoveredProject(project.id)}
               onHoverEnd={() => setHoveredProject(null)}
-              className="group relative bg-white dark:bg-dark-secondary rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500"
+              className="group relative bg-white dark:bg-dark-secondary rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
             >
               {/* Project Image */}
-              <div className="relative h-48 bg-gradient-to-br from-secondary to-accent dark:from-dark-secondary dark:to-dark-accent overflow-hidden">
-                <div className="absolute inset-0 bg-primary/20 dark:bg-dark-primary/30 group-hover:bg-primary/10 dark:group-hover:bg-dark-primary/20 transition-colors duration-300" />
+              <div className="relative h-48 bg-gradient-to-br from-accent to-secondary overflow-hidden">
+                <div className="absolute inset-0 bg-primary/10 group-hover:bg-primary/5 transition-colors duration-300" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-background dark:text-white text-6xl font-bold opacity-20">
+                  <div className="text-background text-6xl font-bold opacity-20">
                     {project.id.toString().padStart(2, '0')}
                   </div>
                 </div>
@@ -109,13 +109,13 @@ const Projects = () => {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: hoveredProject === project.id ? 1 : 0 }}
-                  className="absolute inset-0 bg-primary/80 dark:bg-dark-primary/80 flex items-center justify-center space-x-4"
+                  className="absolute inset-0 bg-primary/80 flex items-center justify-center space-x-4"
                 >
                   <motion.a
                     href={project.liveUrl}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="w-12 h-12 bg-background dark:bg-dark-background rounded-full flex items-center justify-center text-primary dark:text-white hover:bg-accent dark:hover:bg-dark-accent transition-colors"
+                    className="w-12 h-12 bg-background rounded-full flex items-center justify-center text-primary hover:bg-accent transition-colors"
                   >
                     <ExternalLink size={20} />
                   </motion.a>
@@ -123,7 +123,7 @@ const Projects = () => {
                     href={project.githubUrl}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="w-12 h-12 bg-background dark:bg-dark-background rounded-full flex items-center justify-center text-primary dark:text-white hover:bg-accent dark:hover:bg-dark-accent transition-colors"
+                    className="w-12 h-12 bg-background rounded-full flex items-center justify-center text-primary hover:bg-accent transition-colors"
                   >
                     <Github size={20} />
                   </motion.a>
@@ -133,17 +133,17 @@ const Projects = () => {
               {/* Project Content */}
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-bold text-primary dark:text-white group-hover:text-accent dark:group-hover:text-dark-accent transition-colors">
+                  <h3 className="text-xl font-bold text-primary dark:text-dark-primary group-hover:text-accent transition-colors">
                     {project.title}
                   </h3>
                   {project.featured && (
-                    <span className="px-3 py-1 bg-accent dark:bg-dark-accent text-primary dark:text-dark-background text-sm font-semibold rounded-full">
+                    <span className="px-3 py-1 bg-accent text-primary text-sm font-semibold rounded-full">
                       Featured
                     </span>
                   )}
                 </div>
                 
-                <p className="text-primary/70 dark:text-gray-300 mb-4 line-clamp-2">
+                <p className="text-primary/80 dark:text-dark-primary/80 mb-4 line-clamp-2">
                   {project.description}
                 </p>
 
@@ -152,7 +152,7 @@ const Projects = () => {
                   {project.technologies.map((tech, techIndex) => (
                     <span
                       key={techIndex}
-                      className="px-3 py-1 bg-secondary/20 dark:bg-dark-secondary/40 text-primary dark:text-white text-sm rounded-full border border-secondary/30 dark:border-dark-secondary"
+                      className="px-3 py-1 bg-secondary/20 text-primary text-sm rounded-full border border-secondary/30"
                     >
                       {tech}
                     </span>
@@ -160,10 +160,10 @@ const Projects = () => {
                 </div>
 
                 {/* Project Links */}
-                <div className="flex items-center justify-between pt-4 border-t border-secondary/20 dark:border-dark-secondary">
+                <div className="flex items-center justify-between pt-4 border-t border-secondary/20">
                   <a
                     href={project.liveUrl}
-                    className="flex items-center text-primary dark:text-white font-semibold hover:text-accent dark:hover:text-dark-accent transition-colors group/link"
+                    className="flex items-center text-primary dark:text-dark-primary font-semibold hover:text-accent transition-colors group/link"
                   >
                     View Project
                     <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
@@ -172,13 +172,13 @@ const Projects = () => {
                   <div className="flex space-x-3">
                     <a
                       href={project.liveUrl}
-                      className="text-primary/60 dark:text-gray-400 hover:text-accent dark:hover:text-dark-accent transition-colors"
+                      className="text-primary/60 hover:text-accent transition-colors"
                     >
                       <ExternalLink size={18} />
                     </a>
                     <a
                       href={project.githubUrl}
-                      className="text-primary/60 dark:text-gray-400 hover:text-accent dark:hover:text-dark-accent transition-colors"
+                      className="text-primary/60 hover:text-accent transition-colors"
                     >
                       <Github size={18} />
                     </a>
@@ -201,7 +201,7 @@ const Projects = () => {
             href="#"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center bg-primary dark:bg-dark-primary text-background dark:text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            className="inline-flex items-center bg-primary text-background px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
           >
             View All Projects
             <ArrowRight className="ml-2 w-5 h-5" />
