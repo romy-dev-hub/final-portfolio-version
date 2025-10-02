@@ -5,182 +5,192 @@ import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@heroui/react'
+import { gsap } from 'gsap'
 
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationRef = useRef<number>()
+  const rafRef = useRef<number>()
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Set canvas size
-    const setCanvasSize = () => {
-      const dpr = window.devicePixelRatio || 1
-      const rect = canvas.getBoundingClientRect()
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
-      ctx.scale(dpr, dpr)
-      canvas.style.width = `${rect.width}px`
-      canvas.style.height = `${rect.height}px`
-    }
-
-    setCanvasSize()
-    window.addEventListener('resize', setCanvasSize)
-
-    // Grid configuration
-    const gridSize = 30
-    const baseDotRadius = 3
+    // Simulation config
+    const gridSize = 24
+    const baseDotRadius = 3.5
     const hoverRadius = 80
+    const returnStrength = 0.2
+    const friction = 0.8
+
+    // State
+    let cssWidth = 0
+    let cssHeight = 0
     let mouseX = -1000
     let mouseY = -1000
+    let time = 0
 
-    const particles: Array<{
+    type Particle = {
       x: number
       y: number
-      originalX: number
-      originalY: number
+      ox: number
+      oy: number
       vx: number
       vy: number
-    }> = []
+    }
+    const particles: Particle[] = []
 
-    // Initialize grid of particles
-    const initParticles = () => {
+    const setCanvasSize = () => {
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1))
+      const rect = canvas.getBoundingClientRect()
+      cssWidth = Math.max(1, Math.floor(rect.width))
+      cssHeight = Math.max(1, Math.floor(rect.height))
+      canvas.width = Math.floor(cssWidth * dpr)
+      canvas.height = Math.floor(cssHeight * dpr)
+      canvas.style.width = `${cssWidth}px`
+      canvas.style.height = `${cssHeight}px`
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      buildParticles()
+    }
+
+    const buildParticles = () => {
       particles.length = 0
-      const cols = Math.ceil(canvas.width / gridSize) + 2
-      const rows = Math.ceil(canvas.height / gridSize) + 2
-
-      for (let i = -1; i < rows; i++) {
-        for (let j = -1; j < cols; j++) {
-          particles.push({
-            x: j * gridSize,
-            y: i * gridSize,
-            originalX: j * gridSize,
-            originalY: i * gridSize,
-            vx: 0,
-            vy: 0
-          })
+      const cols = Math.ceil(cssWidth / gridSize) + 2
+      const rows = Math.ceil(cssHeight / gridSize) + 2
+      for (let i = -1; i < rows - 1; i++) {
+        for (let j = -1; j < cols - 1; j++) {
+          const x = j * gridSize
+          const y = i * gridSize
+          particles.push({ x, y, ox: x, oy: y, vx: 0, vy: 0 })
         }
       }
     }
 
-    initParticles()
+    setCanvasSize()
+    // Ensure proper layout sizing after first paint
+    requestAnimationFrame(setCanvasSize)
+    window.addEventListener('resize', setCanvasSize)
 
-    // Mouse move handler
-    const handleMouseMove = (e: MouseEvent) => {
+    const onMouseMove = (e: MouseEvent | PointerEvent) => {
       const rect = canvas.getBoundingClientRect()
       mouseX = e.clientX - rect.left
       mouseY = e.clientY - rect.top
     }
-
-    const handleMouseLeave = () => {
+    const onMouseLeave = () => {
       mouseX = -1000
       mouseY = -1000
     }
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseleave', onMouseLeave)
+    window.addEventListener('pointermove', onMouseMove as any)
+    window.addEventListener('pointerleave', onMouseLeave)
 
-    canvas.addEventListener('mousemove', handleMouseMove)
-    canvas.addEventListener('mouseleave', handleMouseLeave)
+    // Drawing helper
+    const draw = () => {
+      if (cssWidth === 0 || cssHeight === 0) return
+      time += 0.016 // ~60fps step for idle drift
+      ctx.clearRect(0, 0, cssWidth, cssHeight)
+      // additive blend for nicer glow
+      const prevComp = ctx.globalCompositeOperation
+      ctx.globalCompositeOperation = 'lighter'
+      const prevAlpha = ctx.globalAlpha
+      const fadeStart = cssHeight * 0.75 // start fading in bottom quarter
+      const fadeEnd = cssHeight // bottom edge
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]
+        const dx = p.x - mouseX
+        const dy = p.y - mouseY
+        const dist = Math.hypot(dx, dy)
 
-    // Animation
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // Update and draw particles
-      particles.forEach(particle => {
-        const dx = particle.x - mouseX
-        const dy = particle.y - mouseY
-        const distance = Math.sqrt(dx * dx + dy * dy)
-
-        // Mouse interaction - move dots away
-        if (distance < hoverRadius && distance > 0) {
-          const force = (1 - distance / hoverRadius) * 12
+        if (dist < hoverRadius && dist > 0) {
+          const force = (1 - dist / hoverRadius) * 12
           const angle = Math.atan2(dy, dx)
-          
-          particle.vx += Math.cos(angle) * force
-          particle.vy += Math.sin(angle) * force
+          p.vx += Math.cos(angle) * force
+          p.vy += Math.sin(angle) * force
         }
 
-        // Return to original position
-        const returnStrength = 0.2
-        particle.vx += (particle.originalX - particle.x) * returnStrength
-        particle.vy += (particle.originalY - particle.y) * returnStrength
+        // Subtle idle drift target around the origin
+        const driftX = Math.sin((p.ox * 0.03) + time * 0.8) * 4 + Math.cos((p.oy * 0.02) + time * 0.6) * 3
+        const driftY = Math.cos((p.oy * 0.025) + time * 0.7) * 4 + Math.sin((p.ox * 0.018) + time * 0.9) * 3
+        const tx = p.ox + driftX
+        const ty = p.oy + driftY
 
-        // Apply friction
-        particle.vx *= 0.8
-        particle.vy *= 0.8
+        // Return to drifting target + friction
+        p.vx += (tx - p.x) * returnStrength
+        p.vy += (ty - p.y) * returnStrength
+        p.vx *= friction
+        p.vy *= friction
 
-        // Update position
-        particle.x += particle.vx
-        particle.y += particle.vy
+        // Integrate
+        p.x += p.vx
+        p.y += p.vy
 
-        // Calculate dot properties based on mouse distance
+        // Size and color by distance
         let dotRadius = baseDotRadius
-        let color = '#A6B28B' // Default sage green
-
-        if (distance < hoverRadius) {
-          // Scale up dot size
-          dotRadius = baseDotRadius * (1 + (1 - distance / hoverRadius) * 1.5)
-          
-          // Change to neon green when very close
-          if (distance < hoverRadius * 0.3) {
-            color = '#00FF00' // Bright neon green
-            // Add glow effect for neon dots
+        let color = '#A6B28B'
+        if (dist < hoverRadius) {
+          dotRadius = baseDotRadius * (1 + (1 - dist / hoverRadius) * 1.5)
+          if (dist < hoverRadius * 0.3) {
+            color = '#00FF00'
             ctx.shadowBlur = 15
             ctx.shadowColor = '#00FF00'
-          } else if (distance < hoverRadius * 0.6) {
-            color = '#7CFC00' // Light green
+          } else if (dist < hoverRadius * 0.6) {
+            color = '#7CFC00'
             ctx.shadowBlur = 8
             ctx.shadowColor = '#7CFC00'
           } else {
-            color = '#A6B28B' // Original sage green
+            color = '#A6B28B'
             ctx.shadowBlur = 0
           }
         } else {
           ctx.shadowBlur = 0
         }
 
-        // Draw dot
+        // Vertical fade near bottom to blend with next section
+        const fadeFactor = p.y < fadeStart ? 1 : Math.max(0, 1 - (p.y - fadeStart) / (fadeEnd - fadeStart))
+        ctx.globalAlpha = fadeFactor
+
         ctx.beginPath()
-        ctx.arc(particle.x, particle.y, dotRadius, 0, Math.PI * 2)
+        ctx.arc(p.x, p.y, dotRadius, 0, Math.PI * 2)
         ctx.fillStyle = color
         ctx.fill()
-        
-        // Reset shadow for next dot
         ctx.shadowBlur = 0
-      })
-
-      animationRef.current = requestAnimationFrame(animate)
+      }
+      ctx.globalAlpha = prevAlpha
+      ctx.globalCompositeOperation = prevComp
     }
 
-    animationRef.current = requestAnimationFrame(animate)
+    // Use GSAP ticker for smooth consistent updates
+    const ticker = () => {
+      draw()
+    }
+    gsap.ticker.add(ticker)
 
     return () => {
       window.removeEventListener('resize', setCanvasSize)
-      canvas.removeEventListener('mousemove', handleMouseMove)
-      canvas.removeEventListener('mouseleave', handleMouseLeave)
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseleave', onMouseLeave)
+      window.removeEventListener('pointermove', onMouseMove as any)
+      window.removeEventListener('pointerleave', onMouseLeave)
+      gsap.ticker.remove(ticker)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [])
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background dark:bg-dark-background">
-      {/* Animated Dots Background */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-80"
-      />
+      {/* Dots Canvas Background (GSAP) */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10" />
 
-      {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-transparent to-accent/5 dark:from-dark-background/60 dark:via-transparent dark:to-dark-accent/5" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent dark:from-dark-background/40" />
+      {/* Side Neon Edge Glows are now global in app/layout.tsx */}
+
+      {/* Gradient Overlays (non-interactive, behind canvas) */}
+      <div className="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-br from-background/60 via-transparent to-accent/5 dark:from-dark-background/60 dark:via-transparent dark:to-dark-accent/5" />
+      <div className="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-t from-background/40 via-transparent to-transparent dark:from-dark-background/40" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full">
+      <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 w-full">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -208,7 +218,7 @@ const Hero = () => {
             transition={{ delay: 0.3, duration: 0.8 }}
           >
             <span className="block text-primary dark:text-dark-primary">
-              Creative
+              Front-End
             </span>
             <span className="block bg-gradient-to-r from-accent to-secondary bg-clip-text text-transparent">
               Developer
@@ -236,46 +246,24 @@ const Hero = () => {
             <Button
               color="primary"
               size="lg"
-              className="bg-primary text-background px-8 py-6 text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300"
+              className="px-9 py-6 text-lg font-semibold rounded-xl shadow-lg shadow-accent/20 bg-gradient-to-r from-accent to-secondary text-background hover:shadow-xl hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 border border-white/10"
               as="a"
               href="#projects"
             >
-              View My Work
+              View My Work →
             </Button>
             
             <Button
               variant="bordered"
               size="lg"
-              className="border-primary text-primary dark:text-dark-primary px-8 py-6 text-lg font-semibold hover:bg-primary hover:text-background transition-all duration-300"
+              className="px-9 py-6 text-lg font-semibold rounded-xl backdrop-blur border-primary/30 text-primary dark:text-dark-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
               as="a"
               href="#about"
             >
               About Me
             </Button>
           </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="grid grid-cols-3 gap-8 mt-12 max-w-md mx-auto"
-          >
-            {[
-              { number: '3+', label: 'Years Exp' },
-              { number: '50+', label: 'Projects' },
-              { number: '100%', label: 'Satisfaction' }
-            ].map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-2xl font-bold text-primary dark:text-dark-primary mb-1">
-                  {stat.number}
-                </div>
-                <div className="text-sm text-primary/60 dark:text-dark-primary/60">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </motion.div>
+          
         </motion.div>
       </div>
 
