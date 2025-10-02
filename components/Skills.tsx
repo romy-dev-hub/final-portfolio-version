@@ -90,7 +90,7 @@ const Skills = () => {
               key={category.title}
               variants={itemVariants}
               whileHover={{ scale: 1.05, y: -10 }}
-              className="bg-white dark:bg-dark-secondary rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 border border-secondary/20 dark:border-dark-secondary"
+              className="bg-background dark:bg-dark-secondary rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 border border-secondary/20 dark:border-dark-secondary"
             >
               <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${category.color} text-background mb-6`}>
                 {category.icon}

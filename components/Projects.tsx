@@ -94,7 +94,7 @@ const Projects = () => {
               whileHover={{ scale: 1.05, y: -10 }}
               onHoverStart={() => setHoveredProject(project.id)}
               onHoverEnd={() => setHoveredProject(null)}
-              className="group relative bg-white dark:bg-dark-secondary rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+              className="group relative bg-secondary/10 dark:bg-dark-secondary rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 border border-secondary/20 dark:border-dark-secondary"
             >
               {/* Project Image */}
               <div className="relative h-48 bg-gradient-to-br from-accent to-secondary dark:from-dark-accent dark:to-dark-secondary overflow-hidden">

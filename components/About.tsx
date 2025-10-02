@@ -61,7 +61,7 @@ const About = () => {
                 <motion.div
                   key={index}
                   whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 bg-white dark:bg-dark-secondary rounded-2xl shadow-lg border border-secondary/20 dark:border-dark-secondary"
+                  className="text-center p-4 bg-background dark:bg-dark-secondary rounded-2xl shadow-lg border border-secondary/20 dark:border-dark-secondary"
                 >
                   <div className="flex justify-center mb-2 text-accent dark:text-dark-accent">
                     {stat.icon}
@@ -112,7 +112,16 @@ const About = () => {
             transition={{ duration: 0.8 }}
             className="relative"
           >
-            <div className="relative w-full h-96 lg:h-[500px] bg-gradient-to-br from-accent to-secondary dark:from-dark-accent dark:to-dark-secondary rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative w-full h-80 sm:h-96 lg:h-[500px] bg-gradient-to-br from-accent to-secondary dark:from-dark-accent dark:to-dark-secondary rounded-3xl overflow-hidden shadow-2xl">
+              {/* Neon ring glow */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-1 rounded-[1.75rem] bg-gradient-to-r from-accent via-secondary to-accent opacity-60 blur-md"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-4 rounded-[2.25rem] bg-accent/20 dark:bg-dark-accent/20 blur-3xl"
+              />
               {/* Animated Background Pattern */}
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute top-10 left-10 w-20 h-20 bg-primary dark:bg-dark-primary rounded-full animate-float" />
@@ -134,7 +143,8 @@ const About = () => {
                   }}
                   className="text-center"
                 >
-                  <div className="w-32 h-32 lg:w-48 lg:h-48 bg-background/20 dark:bg-dark-background/20 rounded-3xl backdrop-blur-sm border border-background/30 dark:border-dark-background/30 flex items-center justify-center">
+                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-48 lg:h-48 bg-background/20 dark:bg-dark-background/20 rounded-3xl backdrop-blur-sm border border-background/30 dark:border-dark-background/30 flex items-center justify-center">
+                    <span className="pointer-events-none absolute inset-0 rounded-3xl ring-2 ring-accent/30 blur-[2px]" />
                     <Code2 className="h-16 w-16 lg:h-24 lg:w-24 text-background dark:text-dark-background" />
                   </div>
                 </motion.div>
