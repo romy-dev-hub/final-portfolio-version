@@ -1,7 +1,7 @@
 // components/Hero.tsx
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@heroui/react'
@@ -10,8 +10,20 @@ import { gsap } from 'gsap'
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number>()
+  const [supportsTextClip, setSupportsTextClip] = useState(false)
 
   useEffect(() => {
+    // Feature detection for gradient text support
+    try {
+      const supports =
+        (CSS as any)?.supports?.('background-clip: text') ||
+        (CSS as any)?.supports?.('-webkit-background-clip: text') ||
+        false
+      setSupportsTextClip(Boolean(supports))
+    } catch {
+      setSupportsTextClip(false)
+    }
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -220,9 +232,23 @@ const Hero = () => {
             <span className="block text-primary dark:text-dark-primary">
               Front-End
             </span>
-            <span className="block bg-gradient-to-r from-accent to-secondary bg-clip-text text-transparent">
-              Developer
-            </span>
+            {supportsTextClip ? (
+              <span
+                className="block"
+                style={{
+                  display: 'inline-block',
+                  backgroundImage: 'linear-gradient(90deg, #F5C9B0, #A6B28B)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  color: 'transparent',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                Developer
+              </span>
+            ) : (
+              <span className="block text-primary dark:text-dark-primary">Developer</span>
+            )}
           </motion.h1>
 
           {/* Subtitle */}
@@ -252,7 +278,7 @@ const Hero = () => {
             >
               View My Work →
             </Button>
-            
+
             <Button
               variant="bordered"
               size="lg"
@@ -260,7 +286,7 @@ const Hero = () => {
               as="a"
               href="#about"
             >
-              About Me
+              More about Me
             </Button>
           </motion.div>
           
