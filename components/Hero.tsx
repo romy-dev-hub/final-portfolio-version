@@ -1,7 +1,7 @@
 // components/Hero.tsx
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@heroui/react'
@@ -9,7 +9,6 @@ import { Button } from '@heroui/react'
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number>()
-  const mousePositionRef = useRef({ x: -1000, y: -1000 }) // Start off-screen
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -33,10 +32,12 @@ const Hero = () => {
     window.addEventListener('resize', setCanvasSize)
 
     // Grid configuration
-    const gridSize = 35
-    const dotRadius = 1.8
-    const connectionDistance = 70
-    const repulsionRadius = 120
+    const gridSize = 30
+    const baseDotRadius = 3
+    const hoverRadius = 80
+    let mouseX = -1000
+    let mouseY = -1000
+
     const particles: Array<{
       x: number
       y: number
@@ -44,7 +45,6 @@ const Hero = () => {
       originalY: number
       vx: number
       vy: number
-      size: number
     }> = []
 
     // Initialize grid of particles
@@ -61,8 +61,7 @@ const Hero = () => {
             originalX: j * gridSize,
             originalY: i * gridSize,
             vx: 0,
-            vy: 0,
-            size: dotRadius + Math.random() * 0.5
+            vy: 0
           })
         }
       }
@@ -70,18 +69,16 @@ const Hero = () => {
 
     initParticles()
 
-    // Mouse move handler - update ref directly
+    // Mouse move handler
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
-      mousePositionRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      }
+      mouseX = e.clientX - rect.left
+      mouseY = e.clientY - rect.top
     }
 
-    // Mouse leave handler - reset mouse position
     const handleMouseLeave = () => {
-      mousePositionRef.current = { x: -1000, y: -1000 }
+      mouseX = -1000
+      mouseY = -1000
     }
 
     canvas.addEventListener('mousemove', handleMouseMove)
@@ -91,103 +88,69 @@ const Hero = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      const isDark = document.documentElement.classList.contains('dark')
-      const primaryColor = isDark ? '#F9F6F3' : '#1C352D'
-      const secondaryColor = isDark ? '#2A3B2E' : '#A6B28B'
-      const accentColor = isDark ? '#E8B896' : '#F5C9B0'
-
-      const mouseX = mousePositionRef.current.x
-      const mouseY = mousePositionRef.current.y
-
-      // Update particles
+      // Update and draw particles
       particles.forEach(particle => {
         const dx = particle.x - mouseX
         const dy = particle.y - mouseY
         const distance = Math.sqrt(dx * dx + dy * dy)
 
-        // Mouse repulsion
-        if (distance < repulsionRadius && distance > 0) {
-          const force = (1 - distance / repulsionRadius) * 8
+        // Mouse interaction - move dots away
+        if (distance < hoverRadius && distance > 0) {
+          const force = (1 - distance / hoverRadius) * 12
           const angle = Math.atan2(dy, dx)
           
-          // Move away from mouse
           particle.vx += Math.cos(angle) * force
           particle.vy += Math.sin(angle) * force
         }
 
-        // Return to original position (spring effect)
-        const returnStrength = 0.15
+        // Return to original position
+        const returnStrength = 0.2
         particle.vx += (particle.originalX - particle.x) * returnStrength
         particle.vy += (particle.originalY - particle.y) * returnStrength
 
         // Apply friction
-        const friction = 0.85
-        particle.vx *= friction
-        particle.vy *= friction
+        particle.vx *= 0.8
+        particle.vy *= 0.8
 
         // Update position
         particle.x += particle.vx
         particle.y += particle.vy
 
-        // Draw particle with pulsing effect based on mouse proximity
-        let pulseSize = particle.size
-        if (distance < repulsionRadius) {
-          pulseSize = particle.size * (1 + (1 - distance / repulsionRadius) * 0.5)
-        }
+        // Calculate dot properties based on mouse distance
+        let dotRadius = baseDotRadius
+        let color = '#A6B28B' // Default sage green
 
-        ctx.beginPath()
-        ctx.arc(particle.x, particle.y, pulseSize, 0, Math.PI * 2)
-        ctx.fillStyle = primaryColor
-        ctx.fill()
-      })
-
-      // Draw connections between particles
-      ctx.strokeStyle = secondaryColor
-      ctx.lineWidth = 0.8
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const p1 = particles[i]
-          const p2 = particles[j]
-          const dx = p1.x - p2.x
-          const dy = p1.y - p2.y
-          const distance = Math.sqrt(dx * dx + dy * dy)
-
-          if (distance < connectionDistance) {
-            const opacity = 1 - (distance / connectionDistance)
-            ctx.globalAlpha = opacity * 0.4
-            
-            // Make connections more visible when mouse is near
-            const mouseD1 = Math.sqrt(
-              Math.pow(p1.x - mouseX, 2) + Math.pow(p1.y - mouseY, 2)
-            )
-            const mouseD2 = Math.sqrt(
-              Math.pow(p2.x - mouseX, 2) + Math.pow(p2.y - mouseY, 2)
-            )
-            
-            if (mouseD1 < repulsionRadius || mouseD2 < repulsionRadius) {
-              ctx.globalAlpha = opacity * 0.7
-              ctx.lineWidth = 1.2
-            }
-            
-            ctx.beginPath()
-            ctx.moveTo(p1.x, p1.y)
-            ctx.lineTo(p2.x, p2.y)
-            ctx.stroke()
-            
-            ctx.lineWidth = 0.8
-            ctx.globalAlpha = 1
+        if (distance < hoverRadius) {
+          // Scale up dot size
+          dotRadius = baseDotRadius * (1 + (1 - distance / hoverRadius) * 1.5)
+          
+          // Change to neon green when very close
+          if (distance < hoverRadius * 0.3) {
+            color = '#00FF00' // Bright neon green
+            // Add glow effect for neon dots
+            ctx.shadowBlur = 15
+            ctx.shadowColor = '#00FF00'
+          } else if (distance < hoverRadius * 0.6) {
+            color = '#7CFC00' // Light green
+            ctx.shadowBlur = 8
+            ctx.shadowColor = '#7CFC00'
+          } else {
+            color = '#A6B28B' // Original sage green
+            ctx.shadowBlur = 0
           }
+        } else {
+          ctx.shadowBlur = 0
         }
-      }
 
-      // Draw mouse influence indicator (hidden)
-      // if (mouseX > 0 && mouseY > 0 && mouseX < canvas.width && mouseY < canvas.height) {
-      //   ctx.beginPath()
-      //   ctx.arc(mouseX, mouseY, 4, 0, Math.PI * 2)
-      //   ctx.fillStyle = accentColor
-      //   ctx.fill()
-      // }
+        // Draw dot
+        ctx.beginPath()
+        ctx.arc(particle.x, particle.y, dotRadius, 0, Math.PI * 2)
+        ctx.fillStyle = color
+        ctx.fill()
+        
+        // Reset shadow for next dot
+        ctx.shadowBlur = 0
+      })
 
       animationRef.current = requestAnimationFrame(animate)
     }
@@ -206,14 +169,14 @@ const Hero = () => {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background dark:bg-dark-background">
-      {/* Animated Grid Background */}
+      {/* Animated Dots Background */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-70 cursor-none"
+        className="absolute inset-0 w-full h-full opacity-80"
       />
 
       {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-transparent to-accent/10 dark:from-dark-background/70 dark:via-transparent dark:to-dark-accent/10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-transparent to-accent/5 dark:from-dark-background/60 dark:via-transparent dark:to-dark-accent/5" />
       <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent dark:from-dark-background/40" />
 
       {/* Content */}
