@@ -9,6 +9,7 @@ import { gsap } from 'gsap'
 
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const rafRef = useRef<number>()
   const [supportsTextClip, setSupportsTextClip] = useState(false)
 
@@ -55,9 +56,13 @@ const Hero = () => {
 
     const setCanvasSize = () => {
       const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1))
-      const rect = canvas.getBoundingClientRect()
+      const container = containerRef.current
+      if (!container) return
+      
+      const rect = container.getBoundingClientRect()
       cssWidth = Math.max(1, Math.floor(rect.width))
       cssHeight = Math.max(1, Math.floor(rect.height))
+      
       canvas.width = Math.floor(cssWidth * dpr)
       canvas.height = Math.floor(cssHeight * dpr)
       canvas.style.width = `${cssWidth}px`
@@ -79,27 +84,49 @@ const Hero = () => {
       }
     }
 
-    setCanvasSize()
-    // Ensure proper layout sizing after first paint
-    setTimeout(() => {
-      requestAnimationFrame(setCanvasSize)
-    }, 100)
+    // Initial setup with delay to ensure DOM is ready
+    const initializeCanvas = () => {
+      setCanvasSize()
+      // Force a reflow and second resize to catch any layout issues
+      setTimeout(() => {
+        setCanvasSize()
+      }, 100)
+    }
+
+    initializeCanvas()
     
+    const resizeObserver = new ResizeObserver(() => {
+      setCanvasSize()
+    })
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current)
+    }
+
     window.addEventListener('resize', setCanvasSize)
 
     const onMouseMove = (e: MouseEvent | PointerEvent) => {
-      const rect = canvas.getBoundingClientRect()
+      const container = containerRef.current
+      if (!container) return
+      
+      const rect = container.getBoundingClientRect()
       mouseX = e.clientX - rect.left
       mouseY = e.clientY - rect.top
     }
+    
     const onMouseLeave = () => {
       mouseX = -1000
       mouseY = -1000
     }
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('mouseleave', onMouseLeave)
-    window.addEventListener('pointermove', onMouseMove as any)
-    window.addEventListener('pointerleave', onMouseLeave)
+    
+    // Add event listeners to the container instead of window for better accuracy
+    const container = containerRef.current
+    if (container) {
+      container.addEventListener('mousemove', onMouseMove)
+      container.addEventListener('mouseleave', onMouseLeave)
+      container.addEventListener('pointermove', onMouseMove as any)
+      container.addEventListener('pointerleave', onMouseLeave)
+    }
 
     // Drawing helper
     const draw = () => {
@@ -112,6 +139,7 @@ const Hero = () => {
       const prevAlpha = ctx.globalAlpha
       const fadeStart = cssHeight * 0.75 // start fading in bottom quarter
       const fadeEnd = cssHeight // bottom edge
+      
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i]
         const dx = p.x - mouseX
@@ -183,25 +211,44 @@ const Hero = () => {
     gsap.ticker.add(ticker)
 
     return () => {
+      resizeObserver.disconnect()
       window.removeEventListener('resize', setCanvasSize)
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseleave', onMouseLeave)
-      window.removeEventListener('pointermove', onMouseMove as any)
-      window.removeEventListener('pointerleave', onMouseLeave)
+      
+      const container = containerRef.current
+      if (container) {
+        container.removeEventListener('mousemove', onMouseMove)
+        container.removeEventListener('mouseleave', onMouseLeave)
+        container.removeEventListener('pointermove', onMouseMove as any)
+        container.removeEventListener('pointerleave', onMouseLeave)
+      }
+      
       gsap.ticker.remove(ticker)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background dark:bg-dark-background">
+    <section 
+      id="home" 
+      ref={containerRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background dark:bg-dark-background"
+      style={{ 
+        position: 'relative',
+        isolation: 'isolate'
+      }}
+    >
       {/* Dots Canvas Background (GSAP) */}
       <canvas 
         ref={canvasRef} 
         className="absolute inset-0 w-full h-full z-10"
         style={{ 
-          minHeight: '100vh',
-          height: '100%'
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          display: 'block',
+          pointerEvents: 'none'
         }}
       />
 
