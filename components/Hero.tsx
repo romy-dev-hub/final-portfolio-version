@@ -63,9 +63,11 @@ const Hero = () => {
       cssWidth = Math.max(1, Math.floor(rect.width))
       cssHeight = Math.max(1, Math.floor(rect.height))
       
-      canvas.width = Math.floor(cssWidth * dpr)
+      // Add extra width to ensure full coverage on mobile
+      const extraWidth = 50 // Extra pixels to ensure full coverage
+      canvas.width = Math.floor((cssWidth + extraWidth) * dpr)
       canvas.height = Math.floor(cssHeight * dpr)
-      canvas.style.width = `${cssWidth}px`
+      canvas.style.width = `${cssWidth + extraWidth}px`
       canvas.style.height = `${cssHeight}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       buildParticles()
@@ -73,7 +75,8 @@ const Hero = () => {
 
     const buildParticles = () => {
       particles.length = 0
-      const cols = Math.ceil(cssWidth / gridSize) + 2
+      const extraWidth = 20 // Match the extra width from setCanvasSize
+      const cols = Math.ceil((cssWidth + extraWidth) / gridSize) + 2
       const rows = Math.ceil(cssHeight / gridSize) + 2
       for (let i = -1; i < rows - 1; i++) {
         for (let j = -1; j < cols - 1; j++) {
@@ -132,7 +135,7 @@ const Hero = () => {
     const draw = () => {
       if (cssWidth === 0 || cssHeight === 0) return
       time += 0.016 // ~60fps step for idle drift
-      ctx.clearRect(0, 0, cssWidth, cssHeight)
+      ctx.clearRect(0, 0, cssWidth + 50, cssHeight) // Clear with extra width
       // additive blend for nicer glow
       const prevComp = ctx.globalCompositeOperation
       ctx.globalCompositeOperation = 'lighter'
@@ -237,7 +240,7 @@ const Hero = () => {
         isolation: 'isolate'
       }}
     >
-      {/* Dots Canvas Background (GSAP) */}
+      {/* Dots Canvas Background (GSAP) - Extended to the right for mobile */}
       <canvas 
         ref={canvasRef} 
         className="absolute inset-0 w-full h-full z-10"
@@ -245,7 +248,7 @@ const Hero = () => {
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '100%',
+          width: 'calc(100% + 50px)', // Extra width to cover mobile edges
           height: '100%',
           display: 'block',
           pointerEvents: 'none'
