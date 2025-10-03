@@ -2,6 +2,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useTheme } from '../context/ThemeContext'
+import SkillsStack from './SkillsStack'
 import { 
   SiNextdotjs, 
   SiTypescript, 
@@ -48,8 +50,10 @@ const Skills = () => {
         { name: "TypeScript", icon: SiTypescript },
         { name: "React", icon: SiReact },
         { name: "Framer Motion", icon: SiFramer },
-        { name: "Hero UI", icon: SiReact },
+        { name: "Lucide React", icon: SiReact },
         { name: "React Icons", icon: SiReact },
+        { name: "Bun", icon: SiBun },
+        { name: "Hero UI", icon: SiReact },
         { name: "Tailwind CSS", icon: SiTailwindcss },
       ],
       color: "from-[#A6B28B] to-[#1C352D]",
@@ -124,6 +128,11 @@ const Skills = () => {
     }
   ]
 
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+  const textPrimary = isDark ? 'text-[#F5C9B0]' : 'text-[#1C352D]'
+  const textSecondary = isDark ? 'text-[#F5C9B0]/70' : 'text-[#1C352D]/70'
+
   const learningPath = [
     { name: "AI/ML", status: "Currently Learning" },
     { name: "Advanced Problem Solving", status: "Improving" },
@@ -176,72 +185,53 @@ const Skills = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#A6B28B]/20 border border-[#A6B28B]/30 mb-4"
           >
             <div className="w-2 h-2 bg-[#A6B28B] rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-[#1C352D] dark:text-[#F5C9B0]">
+            <span className={`text-sm font-medium ${textPrimary}`}>
               Skills & Expertise
             </span>
           </motion.div>
           
-          <h2 className="text-4xl md:text-5xl font-bold text-[#1C352D] dark:text-[#F5C9B0] mb-4">
+          <h2 className={`text-4xl md:text-5xl font-bold ${textPrimary} mb-4`}>
             What I Do
           </h2>
-          <p className="text-xl text-[#1C352D] dark:text-[#F5C9B0]/80 max-w-2xl mx-auto">
+          <p className={`text-xl ${textSecondary} max-w-2xl mx-auto`}>
             Full-stack development, game creation, and multimedia content production
           </p>
         </motion.div>
 
-        {/* Skills Grid */}
+        {/* MERN Stack */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
+          className="mt-6 mb-12 text-center"
         >
-          {skillSections.map((section, index) => (
-            <motion.div
-              key={section.title}
-              variants={itemVariants}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="bg-white/50 dark:bg-[#1C352D]/50 rounded-2xl p-6 border border-[#A6B28B]/20 backdrop-blur-sm hover:shadow-xl transition-all duration-300"
-            >
-              {/* Section Header */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${section.color} text-white`}>
-                  {section.icon}
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-[#1C352D] dark:text-[#F5C9B0]">
-                    {section.title}
-                  </h3>
-                  <p className="text-sm text-[#1C352D]/70 dark:text-[#F5C9B0]/70">
-                    {section.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* Skills List */}
-              <div className="space-y-3">
-                {section.skills.map((skill, skillIndex) => (
-                  <motion.div
-                    key={skill.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: skillIndex * 0.05 }}
-                    viewport={{ once: true }}
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/30 dark:hover:bg-[#1C352D]/30 transition-colors"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-[#1C352D] flex items-center justify-center text-[#1C352D] dark:text-[#F5C9B0] border border-[#A6B28B]/30">
-                      <skill.icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-sm font-medium text-[#1C352D] dark:text-[#F5C9B0]">
-                      {skill.name}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+          <h3 className={`text-2xl font-bold ${textPrimary} mb-8`}>
+            MERN Stack
+          </h3>
+          <div className="flex flex-wrap justify-center gap-8">
+            {[
+              { icon: SiMongodb, name: "MongoDB", color: "text-[#116149]" },
+              { icon: SiExpress, name: "Express", color: "text-[#1C352D] dark:text-[#F5C9B0]" },
+              { icon: SiReact, name: "React", color: "text-[#00B5D8]" },
+              { icon: SiNodedotjs, name: "Node.js", color: "text-[#3C873A]" }
+            ].map((tech) => (
+              <motion.div
+                key={tech.name}
+                whileHover={{ scale: 1.15, rotate: 3 }}
+                className="flex flex-col items-center gap-2"
+              >
+                <tech.icon className={`w-10 h-10 ${tech.color}`} />
+                <span className={`text-sm font-medium ${textPrimary}`}>
+                  {tech.name}
+                </span>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
+
+        {/* Skills Card Stack (separate component) */}
+        <SkillsStack sections={skillSections} className="h-[560px] w-full max-w-[1000px] mx-auto mb-24" />
 
         {/* Learning Path */}
         <motion.div
@@ -272,39 +262,7 @@ const Skills = () => {
           </div>
         </motion.div>
 
-        {/* Tech Stack Highlights */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="mt-16 text-center"
-        >
-          <h3 className="text-2xl font-bold text-[#1C352D] dark:text-[#F5C9B0] mb-8">
-            Tech Stack Highlights
-          </h3>
-          <div className="flex flex-wrap justify-center gap-8">
-            {[
-              { icon: SiReact, name: "React", color: "text-blue-500" },
-              { icon: SiNextdotjs, name: "Next.js", color: "text-black dark:text-white" },
-              { icon: SiTypescript, name: "TypeScript", color: "text-blue-600" },
-              { icon: SiThreedotjs, name: "Three.js", color: "text-black dark:text-white" },
-              { icon: SiPython, name: "Python", color: "text-yellow-600" },
-              { icon: SiMongodb, name: "MongoDB", color: "text-green-500" }
-            ].map((tech, index) => (
-              <motion.div
-                key={tech.name}
-                whileHover={{ scale: 1.2, rotate: 5 }}
-                className="flex flex-col items-center gap-2"
-              >
-                <tech.icon className={`w-8 h-8 ${tech.color}`} />
-                <span className="text-sm font-medium text-[#1C352D] dark:text-[#F5C9B0]">
-                  {tech.name}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        
       </div>
     </section>
   )
