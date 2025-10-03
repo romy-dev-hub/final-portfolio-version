@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@heroui/react'
-import { gsap } from 'gsap'
 
 const Hero = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -75,7 +74,7 @@ const Hero = () => {
 
     const buildParticles = () => {
       particles.length = 0
-      const extraWidth = 20 // Match the extra width from setCanvasSize
+      const extraWidth = 50 // Match the extra width from setCanvasSize
       const cols = Math.ceil((cssWidth + extraWidth) / gridSize) + 2
       const rows = Math.ceil(cssHeight / gridSize) + 2
       for (let i = -1; i < rows - 1; i++) {
@@ -207,11 +206,12 @@ const Hero = () => {
       ctx.globalCompositeOperation = prevComp
     }
 
-    // Use GSAP ticker for smooth consistent updates
-    const ticker = () => {
+    // Animation loop
+    const animate = () => {
       draw()
+      rafRef.current = requestAnimationFrame(animate)
     }
-    gsap.ticker.add(ticker)
+    animate()
 
     return () => {
       resizeObserver.disconnect()
@@ -225,7 +225,6 @@ const Hero = () => {
         container.removeEventListener('pointerleave', onMouseLeave)
       }
       
-      gsap.ticker.remove(ticker)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [])
@@ -240,7 +239,7 @@ const Hero = () => {
         isolation: 'isolate'
       }}
     >
-      {/* Dots Canvas Background (GSAP) - Extended to the right for mobile */}
+      {/* Dots Canvas Background - Extended to the right for mobile */}
       <canvas 
         ref={canvasRef} 
         className="absolute inset-0 w-full h-full z-10"
@@ -255,9 +254,7 @@ const Hero = () => {
         }}
       />
 
-      {/* Side Neon Edge Glows are now global in app/layout.tsx */}
-
-      {/* Gradient Overlays (non-interactive, behind canvas) */}
+      {/* Gradient Overlays */}
       <div className="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-br from-background/60 via-transparent to-accent/5 dark:from-dark-background/60 dark:via-transparent dark:to-dark-accent/5" />
       <div className="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-t from-background/40 via-transparent to-transparent dark:from-dark-background/40" />
 
@@ -322,17 +319,17 @@ const Hero = () => {
             accessibility, and modern design principles.
           </motion.p>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons - Improved Mobile Responsiveness */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
+            className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center w-full max-w-md mx-auto px-4"
           >
             <Button
               color="primary"
               size="lg"
-              className="w-full sm:w-auto px-6 py-5 sm:px-9 sm:py-6 text-base sm:text-lg font-semibold rounded-xl shadow-lg shadow-accent/20 bg-gradient-to-r from-accent to-secondary text-background hover:shadow-xl hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 border border-white/10"
+              className="w-full min-h-14 text-base font-semibold rounded-xl shadow-lg shadow-accent/20 bg-gradient-to-r from-accent to-secondary text-background hover:shadow-xl transition-all duration-300 border border-white/10"
               as="a"
               href="#projects"
             >
@@ -342,7 +339,7 @@ const Hero = () => {
             <Button
               variant="bordered"
               size="lg"
-              className="w-full sm:w-auto px-6 py-5 sm:px-9 sm:py-6 text-base sm:text-lg font-semibold rounded-xl backdrop-blur border-primary/30 text-primary dark:text-dark-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
+              className="w-full min-h-14 text-base font-semibold rounded-xl backdrop-blur border-primary/30 text-primary dark:text-dark-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
               as="a"
               href="#about"
             >
