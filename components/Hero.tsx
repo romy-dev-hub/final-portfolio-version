@@ -81,7 +81,10 @@ const Hero = () => {
 
     setCanvasSize()
     // Ensure proper layout sizing after first paint
-    requestAnimationFrame(setCanvasSize)
+    setTimeout(() => {
+      requestAnimationFrame(setCanvasSize)
+    }, 100)
+    
     window.addEventListener('resize', setCanvasSize)
 
     const onMouseMove = (e: MouseEvent | PointerEvent) => {
@@ -193,7 +196,14 @@ const Hero = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background dark:bg-dark-background">
       {/* Dots Canvas Background (GSAP) */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10" />
+      <canvas 
+        ref={canvasRef} 
+        className="absolute inset-0 w-full h-full z-10"
+        style={{ 
+          minHeight: '100vh',
+          height: '100%'
+        }}
+      />
 
       {/* Side Neon Edge Glows are now global in app/layout.tsx */}
 
@@ -202,7 +212,7 @@ const Hero = () => {
       <div className="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-t from-background/40 via-transparent to-transparent dark:from-dark-background/40" />
 
       {/* Content */}
-      <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 w-full">
+      <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 w-full py-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,7 +224,7 @@ const Hero = () => {
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 sm:mb-8"
           >
             <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
             <span className="text-sm font-medium text-primary dark:text-dark-primary">
@@ -224,7 +234,7 @@ const Hero = () => {
 
           {/* Main Heading */}
           <motion.h1
-            className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6"
+            className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 px-2"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
@@ -256,7 +266,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-lg md:text-xl text-primary/80 dark:text-dark-primary/80 mb-8 max-w-2xl mx-auto leading-relaxed"
+            className="text-base md:text-lg lg:text-xl text-primary/80 dark:text-dark-primary/80 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4"
           >
             I build exceptional digital experiences focused on performance, 
             accessibility, and modern design principles.
@@ -267,12 +277,12 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
           >
             <Button
               color="primary"
               size="lg"
-              className="px-9 py-6 text-lg font-semibold rounded-xl shadow-lg shadow-accent/20 bg-gradient-to-r from-accent to-secondary text-background hover:shadow-xl hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 border border-white/10"
+              className="w-full sm:w-auto px-6 py-5 sm:px-9 sm:py-6 text-base sm:text-lg font-semibold rounded-xl shadow-lg shadow-accent/20 bg-gradient-to-r from-accent to-secondary text-background hover:shadow-xl hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 border border-white/10"
               as="a"
               href="#projects"
             >
@@ -282,7 +292,7 @@ const Hero = () => {
             <Button
               variant="bordered"
               size="lg"
-              className="px-9 py-6 text-lg font-semibold rounded-xl backdrop-blur border-primary/30 text-primary dark:text-dark-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
+              className="w-full sm:w-auto px-6 py-5 sm:px-9 sm:py-6 text-base sm:text-lg font-semibold rounded-xl backdrop-blur border-primary/30 text-primary dark:text-dark-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
               as="a"
               href="#about"
             >
@@ -298,7 +308,7 @@ const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-20"
       >
         <motion.a
           href="#skills"
@@ -306,11 +316,11 @@ const Hero = () => {
           transition={{ duration: 2, repeat: Infinity }}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="text-sm text-primary/60 dark:text-dark-primary/60 group-hover:text-primary dark:group-hover:text-dark-primary transition-colors">
+          <div className="text-xs sm:text-sm text-primary/60 dark:text-dark-primary/60 group-hover:text-primary dark:group-hover:text-dark-primary transition-colors">
             Scroll to explore
           </div>
-          <div className="w-10 h-10 rounded-full bg-background/50 dark:bg-dark-background/50 border border-primary/20 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-            <ChevronDown className="h-4 w-4 text-primary dark:text-dark-primary" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-background/50 dark:bg-dark-background/50 border border-primary/20 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+            <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 text-primary dark:text-dark-primary" />
           </div>
         </motion.a>
       </motion.div>
