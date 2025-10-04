@@ -2,6 +2,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { ExternalLink, Github, ArrowRight, Calendar, Code2, Users } from 'lucide-react'
 import { useState } from 'react'
 import { useTheme } from '../context/ThemeContext'
@@ -165,9 +166,19 @@ const Projects = () => {
               onHoverEnd={() => setHoveredProject(null)}
               className={`group relative ${bgCard} rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 border ${borderColor} backdrop-blur-sm`}
             >
-              {/* Project Header with Gradient */}
+              {/* Project Header with Image + Gradient */}
               <div className="relative h-48 bg-gradient-to-br from-[#A6B28B] to-[#1C352D] overflow-hidden">
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors duration-300" />
+                {/* Project cover image */}
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover"
+                  priority={index === 0}
+                />
+                {/* Subtle dark overlay for readability */}
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
                 
                 {/* Project Number */}
                 <div className="absolute top-4 left-4">
