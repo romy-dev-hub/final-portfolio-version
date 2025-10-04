@@ -21,8 +21,8 @@ const Projects = () => {
       id: 1,
       title: "Flowers Encyclopedia",
       description: "A beautiful web application showcasing various flowers with detailed information, built with modern web technologies and responsive design.",
-      technologies: ["HTML", "CSS", "JavaScript", "Responsive Design"],
-      image: "/images/flowers-encyclopedia.jpg",
+      technologies: ["React", "Tailwind CSS", "TypeScript", "Responsive Design", "Framer Motion", "Three.js"],
+      image: "/images/flowers.png",
       liveUrl: "https://romy-dev-hub.github.io/flowers-encyclopedia/",
       githubUrl: "https://github.com/romy-dev-hub/flowers-encyclopedia",
       featured: true,
@@ -36,8 +36,8 @@ const Projects = () => {
       id: 2,
       title: "Library Database System",
       description: "A comprehensive library management system built with Java and SQL, featuring book tracking, member management, and database operations.",
-      technologies: ["Java", "JavaFX", "SQL", "Oracle DB", "Database Design"],
-      image: "/images/library-system.jpg",
+      technologies: ["Java", "Swing", "SQL", "Oracle DB", "Database Design"],
+      image: "/images/database.png",
       liveUrl: "https://github.com/romy-dev-hub/lib-project-",
       githubUrl: "https://github.com/romy-dev-hub/lib-project-",
       featured: true,
@@ -51,28 +51,28 @@ const Projects = () => {
       id: 3,
       title: "Community Prototype",
       description: "A community website prototype with user authentication, forums, and interactive features for building online communities.",
-      technologies: ["React", "Node.js", "MongoDB", "Express", "JWT"],
-      image: "/images/community-prototype.jpg",
+      technologies: ["React", "Node.js", "JavaScript", "Framer Motion", "CSS", "Next.js"],
+      image: "/images/community.png",
       liveUrl: "https://romy-dev-hub.github.io/community-prototype-/",
       githubUrl: "https://github.com/romy-dev-hub/community-prototype-",
       featured: true,
       details: {
-        type: "Full Stack",
+        type: "Web App",
         status: "Completed",
-        complexity: "Advanced"
+        complexity: "Intermediate"
       }
     },
     {
       id: 4,
       title: "NexBlog (In Progress)",
       description: "A modern blogging platform built with Next.js, featuring rich text editing, user profiles, and real-time updates. Currently under active development.",
-      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL"],
-      image: "/images/nexblog.jpg",
+      technologies: ["Next.js", "JavaScript", "Tailwind CSS", "Three.js", "Framer Motion", "MongoDB", "Express"],
+      image: "/images/nexblog.png",
       liveUrl: "#",
       githubUrl: "https://github.com/romy-dev-hub/nexblog",
       featured: false,
       details: {
-        type: "Web App",
+        type: "Full Stack App",
         status: "In Development",
         complexity: "Advanced"
       }
