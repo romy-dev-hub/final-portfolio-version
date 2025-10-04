@@ -2,42 +2,80 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ExternalLink, Github, ArrowRight } from 'lucide-react'
+import { ExternalLink, Github, ArrowRight, Calendar, Code2, Users } from 'lucide-react'
 import { useState } from 'react'
+import { useTheme } from '../context/ThemeContext'
 
 const Projects = () => {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null)
+  const { theme } = useTheme()
+  
+  const isDark = theme === 'dark'
+  const textPrimary = isDark ? 'text-[#F5C9B0]' : 'text-[#1C352D]'
+  const textSecondary = isDark ? 'text-[#F5C9B0]/70' : 'text-[#1C352D]/70'
+  const bgCard = isDark ? 'bg-[#1C352D]/50' : 'bg-[#A6B28B]/20'
+  const borderColor = isDark ? 'border-[#A6B28B]/20' : 'border-[#A6B28B]/30'
 
   const projects = [
     {
       id: 1,
-      title: "E-Commerce Platform",
-      description: "A modern e-commerce solution built with Next.js, featuring real-time inventory and payment processing.",
-      technologies: ["Next.js", "TypeScript", "Stripe", "MongoDB"],
-      image: "/images/project1.jpg",
-      liveUrl: "#",
-      githubUrl: "#",
-      featured: true
+      title: "Flowers Encyclopedia",
+      description: "A beautiful web application showcasing various flowers with detailed information, built with modern web technologies and responsive design.",
+      technologies: ["HTML", "CSS", "JavaScript", "Responsive Design"],
+      image: "/images/flowers-encyclopedia.jpg",
+      liveUrl: "https://romy-dev-hub.github.io/flowers-encyclopedia/",
+      githubUrl: "https://github.com/romy-dev-hub/flowers-encyclopedia",
+      featured: true,
+      details: {
+        type: "Web App",
+        status: "Completed",
+        complexity: "Intermediate"
+      }
     },
     {
       id: 2,
-      title: "3D Portfolio Website",
-      description: "Interactive portfolio with Three.js animations and modern UI design principles.",
-      technologies: ["React", "Three.js", "Framer Motion", "Tailwind"],
-      image: "/images/project2.jpg",
-      liveUrl: "#",
-      githubUrl: "#",
-      featured: true
+      title: "Library Database System",
+      description: "A comprehensive library management system built with Java and SQL, featuring book tracking, member management, and database operations.",
+      technologies: ["Java", "JavaFX", "SQL", "Oracle DB", "Database Design"],
+      image: "/images/library-system.jpg",
+      liveUrl: "https://github.com/romy-dev-hub/lib-project-",
+      githubUrl: "https://github.com/romy-dev-hub/lib-project-",
+      featured: true,
+      details: {
+        type: "Desktop App",
+        status: "Completed", 
+        complexity: "Advanced"
+      }
     },
     {
       id: 3,
-      title: "Task Management App",
-      description: "Collaborative task management application with real-time updates and team features.",
-      technologies: ["Next.js", "Socket.io", "PostgreSQL", "Redis"],
-      image: "/images/project3.jpg",
+      title: "Community Prototype",
+      description: "A community website prototype with user authentication, forums, and interactive features for building online communities.",
+      technologies: ["React", "Node.js", "MongoDB", "Express", "JWT"],
+      image: "/images/community-prototype.jpg",
+      liveUrl: "https://romy-dev-hub.github.io/community-prototype-/",
+      githubUrl: "https://github.com/romy-dev-hub/community-prototype-",
+      featured: true,
+      details: {
+        type: "Full Stack",
+        status: "Completed",
+        complexity: "Advanced"
+      }
+    },
+    {
+      id: 4,
+      title: "NexBlog (In Progress)",
+      description: "A modern blogging platform built with Next.js, featuring rich text editing, user profiles, and real-time updates. Currently under active development.",
+      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL"],
+      image: "/images/nexblog.jpg",
       liveUrl: "#",
-      githubUrl: "#",
-      featured: false
+      githubUrl: "https://github.com/romy-dev-hub/nexblog",
+      featured: false,
+      details: {
+        type: "Web App",
+        status: "In Development",
+        complexity: "Advanced"
+      }
     }
   ]
 
@@ -46,7 +84,7 @@ const Projects = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3
+        staggerChildren: 0.2
       }
     }
   }
@@ -62,9 +100,27 @@ const Projects = () => {
     }
   }
 
+  const getComplexityColor = (complexity: string) => {
+    switch (complexity) {
+      case 'Beginner': return 'bg-green-500/20 text-green-700 dark:text-green-300'
+      case 'Intermediate': return 'bg-yellow-500/20 text-yellow-700 dark:text-yellow-300'
+      case 'Advanced': return 'bg-red-500/20 text-red-700 dark:text-red-300'
+      default: return 'bg-gray-500/20 text-gray-700 dark:text-gray-300'
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Completed': return 'bg-[#A6B28B]/30 text-[#1C352D] dark:text-[#F5C9B0]'
+      case 'In Development': return 'bg-[#F5C9B0]/30 text-[#1C352D] dark:text-[#F5C9B0]'
+      default: return 'bg-gray-500/20 text-gray-700 dark:text-gray-300'
+    }
+  }
+
   return (
     <section id="projects" className="py-20 bg-secondary/10 dark:bg-dark-background/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -72,78 +128,115 @@ const Projects = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-dark-primary mb-4">
+          <motion.div
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#A6B28B]/20 border border-[#A6B28B]/30 mb-4"
+          >
+            <div className="w-2 h-2 bg-[#A6B28B] rounded-full animate-pulse" />
+            <span className={`text-sm font-medium ${textPrimary}`}>
+              My Work
+            </span>
+          </motion.div>
+          
+          <h2 className={`text-4xl md:text-5xl font-bold ${textPrimary} mb-4`}>
             Featured Projects
           </h2>
-          <p className="text-xl text-primary/80 dark:text-dark-primary/80 max-w-2xl mx-auto">
-            Some of my recent work that showcases my skills and creativity
+          <p className={`text-xl ${textSecondary} max-w-2xl mx-auto`}>
+            A showcase of my best work, from web applications to database systems
           </p>
         </motion.div>
 
+        {/* Projects Grid */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
           {projects.map((project, index) => (
             <motion.div
               key={project.id}
               variants={projectVariants}
-              whileHover={{ scale: 1.05, y: -10 }}
+              whileHover={{ y: -8 }}
               onHoverStart={() => setHoveredProject(project.id)}
               onHoverEnd={() => setHoveredProject(null)}
-              className="group relative bg-secondary/10 dark:bg-dark-secondary rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 border border-secondary/20 dark:border-dark-secondary"
+              className={`group relative ${bgCard} rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 border ${borderColor} backdrop-blur-sm`}
             >
-              {/* Project Image */}
-              <div className="relative h-48 bg-gradient-to-br from-accent to-secondary dark:from-dark-accent dark:to-dark-secondary overflow-hidden">
-                <div className="absolute inset-0 bg-primary/10 dark:bg-dark-primary/20 group-hover:bg-primary/5 dark:group-hover:bg-dark-primary/10 transition-colors duration-300" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-background dark:text-dark-background text-6xl font-bold opacity-20">
-                    {project.id.toString().padStart(2, '0')}
+              {/* Project Header with Gradient */}
+              <div className="relative h-48 bg-gradient-to-br from-[#A6B28B] to-[#1C352D] overflow-hidden">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors duration-300" />
+                
+                {/* Project Number */}
+                <div className="absolute top-4 left-4">
+                  <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">
+                      {project.id.toString().padStart(2, '0')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Project Details */}
+                <div className="absolute top-4 right-4 flex flex-col gap-1 items-end">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.details.status)}`}>
+                    {project.details.status}
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getComplexityColor(project.details.complexity)}`}>
+                    {project.details.complexity}
+                  </span>
+                </div>
+
+                {/* Project Title Overlay */}
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="text-white text-xl font-bold mb-2">
+                    {project.title}
+                  </h3>
+                  <div className="flex gap-2">
+                    {project.featured && (
+                      <span className="px-3 py-1 bg-[#F5C9B0] text-[#1C352D] text-xs font-semibold rounded-full">
+                        Featured
+                      </span>
+                    )}
+                    <span className="px-3 py-1 bg-white/20 text-white text-xs font-medium rounded-full flex items-center gap-1">
+                      <Code2 className="w-3 h-3" />
+                      {project.details.type}
+                    </span>
                   </div>
                 </div>
                 
-                {/* Hover Overlay */}
+                {/* Hover Overlay with Links */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: hoveredProject === project.id ? 1 : 0 }}
-                  className="absolute inset-0 bg-primary/80 dark:bg-dark-primary/80 flex items-center justify-center space-x-4"
+                  className="absolute inset-0 bg-[#1C352D]/90 flex items-center justify-center space-x-6"
                 >
                   <motion.a
                     href={project.liveUrl}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="w-12 h-12 bg-background dark:bg-dark-background rounded-full flex items-center justify-center text-primary dark:text-dark-primary hover:bg-accent dark:hover:bg-dark-accent transition-colors"
+                    className={`w-14 h-14 rounded-full flex items-center justify-center ${
+                      project.id === 4 ? 'bg-[#A6B28B]/50 cursor-not-allowed' : 'bg-[#F5C9B0] hover:bg-[#A6B28B]'
+                    } transition-colors`}
+                    onClick={project.id === 4 ? (e) => e.preventDefault() : undefined}
                   >
-                    <ExternalLink size={20} />
+                    <ExternalLink className={`w-5 h-5 ${project.id === 4 ? 'text-white/70' : 'text-[#1C352D]'}`} />
                   </motion.a>
                   <motion.a
                     href={project.githubUrl}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="w-12 h-12 bg-background dark:bg-dark-background rounded-full flex items-center justify-center text-primary dark:text-dark-primary hover:bg-accent dark:hover:bg-dark-accent transition-colors"
+                    className="w-14 h-14 bg-[#F5C9B0] rounded-full flex items-center justify-center hover:bg-[#A6B28B] transition-colors"
                   >
-                    <Github size={20} />
+                    <Github className="w-5 h-5 text-[#1C352D]" />
                   </motion.a>
                 </motion.div>
               </div>
 
               {/* Project Content */}
               <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-bold text-primary dark:text-dark-primary group-hover:text-accent dark:group-hover:text-dark-accent transition-colors">
-                    {project.title}
-                  </h3>
-                  {project.featured && (
-                    <span className="px-3 py-1 bg-accent dark:bg-dark-accent text-primary dark:text-dark-background text-sm font-semibold rounded-full">
-                      Featured
-                    </span>
-                  )}
-                </div>
-                
-                <p className="text-primary/80 dark:text-dark-primary/80 mb-4 line-clamp-2">
+                <p className={`${textSecondary} mb-6 leading-relaxed`}>
                   {project.description}
                 </p>
 
@@ -152,7 +245,7 @@ const Projects = () => {
                   {project.technologies.map((tech, techIndex) => (
                     <span
                       key={techIndex}
-                      className="px-3 py-1 bg-secondary/20 dark:bg-dark-secondary/40 text-primary dark:text-dark-primary text-sm rounded-full border border-secondary/30 dark:border-dark-secondary"
+                      className="px-3 py-1 bg-[#A6B28B]/20 text-[#1C352D] dark:text-[#F5C9B0] text-sm rounded-full border border-[#A6B28B]/30"
                     >
                       {tech}
                     </span>
@@ -160,25 +253,31 @@ const Projects = () => {
                 </div>
 
                 {/* Project Links */}
-                <div className="flex items-center justify-between pt-4 border-t border-secondary/20 dark:border-dark-secondary">
+                <div className="flex items-center justify-between pt-4 border-t border-[#A6B28B]/20">
                   <a
                     href={project.liveUrl}
-                    className="flex items-center text-primary dark:text-dark-primary font-semibold hover:text-accent dark:hover:text-dark-accent transition-colors group/link"
+                    className={`flex items-center font-semibold ${
+                      project.id === 4 ? 'text-[#A6B28B] cursor-not-allowed' : 'text-[#1C352D] dark:text-[#F5C9B0] hover:text-[#A6B28B]'
+                    } transition-colors group/link`}
+                    onClick={project.id === 4 ? (e) => e.preventDefault() : undefined}
                   >
-                    View Project
-                    <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                    {project.id === 4 ? 'Coming Soon' : 'View Project'}
+                    {project.id !== 4 && (
+                      <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                    )}
                   </a>
                   
                   <div className="flex space-x-3">
                     <a
                       href={project.liveUrl}
-                      className="text-primary/60 dark:text-dark-primary/60 hover:text-accent dark:hover:text-dark-accent transition-colors"
+                      className={`${project.id === 4 ? 'text-[#A6B28B]/50 cursor-not-allowed' : 'text-[#1C352D]/60 dark:text-[#F5C9B0]/60 hover:text-[#A6B28B]'} transition-colors`}
+                      onClick={project.id === 4 ? (e) => e.preventDefault() : undefined}
                     >
                       <ExternalLink size={18} />
                     </a>
                     <a
                       href={project.githubUrl}
-                      className="text-primary/60 dark:text-dark-primary/60 hover:text-accent dark:hover:text-dark-accent transition-colors"
+                      className="text-[#1C352D]/60 dark:text-[#F5C9B0]/60 hover:text-[#A6B28B] transition-colors"
                     >
                       <Github size={18} />
                     </a>
@@ -195,15 +294,15 @@ const Projects = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="text-center mt-16"
         >
           <motion.a
-            href="#"
+            href="https://github.com/romy-dev-hub"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center bg-primary text-background px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            className="inline-flex items-center bg-gradient-to-r from-[#A6B28B] to-[#1C352D] text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            View All Projects
+            View All Projects on GitHub
             <ArrowRight className="ml-2 w-5 h-5" />
           </motion.a>
         </motion.div>
