@@ -171,20 +171,23 @@ const Hero = () => {
         p.x += p.vx
         p.y += p.vy
 
-        // Size and color by distance
+        // Size and color by distance (using palette)
         let dotRadius = baseDotRadius
-        let color = '#A6B28B'
+        let color = '#A6B28B' // far: sage
         if (dist < hoverRadius) {
           dotRadius = baseDotRadius * (1 + (1 - dist / hoverRadius) * 1.5)
           if (dist < hoverRadius * 0.3) {
-            color = '#00FF00'
+            // close: deep green
+            color = '#1C352D'
             ctx.shadowBlur = 15
-            ctx.shadowColor = '#00FF00'
+            ctx.shadowColor = '#1C352D'
           } else if (dist < hoverRadius * 0.6) {
-            color = '#7CFC00'
+            // medium: brighter/different sage tone
+            color = '#6D8A5C'
             ctx.shadowBlur = 8
-            ctx.shadowColor = '#7CFC00'
+            ctx.shadowColor = '#6D8A5C'
           } else {
+            // far within hover: sage
             color = '#A6B28B'
             ctx.shadowBlur = 0
           }

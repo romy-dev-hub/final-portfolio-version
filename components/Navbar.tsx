@@ -83,7 +83,7 @@ const Navbar = () => {
               </div>
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-[#1C352D] to-[#A6B28B] bg-clip-text text-transparent dark:from-[#F5C9B0] dark:to-[#A6B28B]">
-              DevPortfolio
+              小罗
             </span>
           </motion.div>
 
