@@ -2,6 +2,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { useRef } from 'react'
 import { useInView } from 'framer-motion'
 import { Download, Mail, Award, Users, Clock, Code2 } from 'lucide-react'
@@ -62,7 +63,7 @@ const About = () => {
           >
             <div className={`space-y-4 text-lg ${textSecondary}`}>
               <p>
-                Hello! I'm a passionate full-stack developer with a love for creating 
+                Hello! I'm a passionate full-stack (mern) developer with a love for creating 
                 digital experiences that are both beautiful and functional. My journey 
                 in web development started over 3 years ago, and I've been hooked ever since.
               </p>
@@ -91,16 +92,16 @@ const About = () => {
                   key={index}
                   whileHover={{ scale: 1.05 }}
                   className={`text-center p-4 rounded-2xl shadow-lg border border-[#A6B28B]/30 backdrop-blur-sm ${
-                    theme === 'dark' ? 'bg-[#1C352D]/50' : 'bg-[#A6B28B]/20'
+                    theme === 'dark' ? 'bg-[#1C352D]/50' : 'bg-[#A6B28B]'
                   }`}
                 >
-                  <div className="flex justify-center mb-2 text-[#A6B28B] dark:text-[#F5C9B0]">
+                  <div className="flex justify-center mb-2 text-[#1C352D] dark:text-[#F5C9B0]">
                     {stat.icon}
                   </div>
-                  <div className={`text-2xl font-bold ${textPrimary} mb-1`}>
+                  <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-[#F5C9B0]' : '!text-[#1C352D]'} mb-1`}>
                     {stat.number}
                   </div>
-                  <div className={`text-sm ${textSecondary}`}>
+                  <div className={`text-sm ${theme === 'dark' ? 'text-[#F5C9B0]/70' : '!text-[#1C352D]'}`}>
                     {stat.text}
                   </div>
                 </motion.div>
@@ -125,7 +126,7 @@ const About = () => {
               </motion.a>
               
               <motion.a
-                href="mailto:hello@example.com"
+                href="mailto:roumaissa.hadibi.dev@gmail.com"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`flex items-center justify-center border-2 border-[#A6B28B] ${textPrimary} px-6 py-3 rounded-full font-semibold hover:bg-[#A6B28B] hover:text-white transition-all duration-300`}
@@ -160,7 +161,8 @@ const About = () => {
                 <div className="absolute bottom-20 left-20 w-12 h-12 bg-[#F5C9B0] rounded-full animate-float" style={{ animationDelay: '4s' }} />
               </div>
               
-              {/* Center Content */}
+              {/* Center Content */
+              }
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div
                   animate={{ 
@@ -174,9 +176,18 @@ const About = () => {
                   }}
                   className="text-center"
                 >
-                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-48 lg:h-48 bg-white/20 dark:bg-[#1C352D]/20 rounded-3xl backdrop-blur-sm border border-white/30 dark:border-[#1C352D]/30 flex items-center justify-center">
+                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-48 lg:h-48 bg-white/20 dark:bg-[#1C352D]/20 rounded-3xl backdrop-blur-sm border border-white/30 dark:border-[#1C352D]/30 overflow-hidden">
+                    {/* User photo */}
+                    <Image
+                      src="/images/about.jpg"
+                      alt="About photo"
+                      fill
+                      sizes="(min-width: 1024px) 12rem, (min-width: 640px) 8rem, 7rem"
+                      className="object-cover rounded-3xl"
+                      priority
+                    />
+                    {/* Ring overlay */}
                     <span className="pointer-events-none absolute inset-0 rounded-3xl ring-2 ring-[#A6B28B]/30 blur-[2px]" />
-                    <Code2 className="h-16 w-16 lg:h-24 lg:w-24 text-white dark:text-[#F5C9B0]" />
                   </div>
                 </motion.div>
               </div>
