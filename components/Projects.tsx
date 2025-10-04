@@ -245,7 +245,9 @@ const Projects = () => {
                   {project.technologies.map((tech, techIndex) => (
                     <span
                       key={techIndex}
-                      className="px-3 py-1 bg-[#A6B28B]/20 text-[#1C352D] dark:text-[#F5C9B0] text-sm rounded-full border border-[#A6B28B]/30"
+                      className={`px-3 py-1 text-sm rounded-full border border-[#A6B28B]/30 ${
+                        isDark ? 'bg-transparent text-[#F5C9B0]' : 'bg-[#A6B28B]/20 text-[#1C352D]'
+                      }`}
                     >
                       {tech}
                     </span>
@@ -257,7 +259,9 @@ const Projects = () => {
                   <a
                     href={project.liveUrl}
                     className={`flex items-center font-semibold ${
-                      project.id === 4 ? 'text-[#A6B28B] cursor-not-allowed' : 'text-[#1C352D] dark:text-[#F5C9B0] hover:text-[#A6B28B]'
+                      project.id === 4
+                        ? 'text-[#A6B28B] cursor-not-allowed'
+                        : `${isDark ? 'text-[#F5C9B0]' : 'text-[#1C352D]'} hover:text-[#A6B28B]`
                     } transition-colors group/link`}
                     onClick={project.id === 4 ? (e) => e.preventDefault() : undefined}
                   >
@@ -270,14 +274,18 @@ const Projects = () => {
                   <div className="flex space-x-3">
                     <a
                       href={project.liveUrl}
-                      className={`${project.id === 4 ? 'text-[#A6B28B]/50 cursor-not-allowed' : 'text-[#1C352D]/60 dark:text-[#F5C9B0]/60 hover:text-[#A6B28B]'} transition-colors`}
+                      className={`${
+                        project.id === 4
+                          ? 'text-[#A6B28B]/50 cursor-not-allowed'
+                          : `${isDark ? 'text-[#F5C9B0]/60' : 'text-[#1C352D]/60'} hover:text-[#A6B28B]`
+                      } transition-colors`}
                       onClick={project.id === 4 ? (e) => e.preventDefault() : undefined}
                     >
                       <ExternalLink size={18} />
                     </a>
                     <a
                       href={project.githubUrl}
-                      className="text-[#1C352D]/60 dark:text-[#F5C9B0]/60 hover:text-[#A6B28B] transition-colors"
+                      className={`${isDark ? 'text-[#F5C9B0]/60' : 'text-[#1C352D]/60'} hover:text-[#A6B28B] transition-colors`}
                     >
                       <Github size={18} />
                     </a>
