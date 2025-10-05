@@ -231,7 +231,7 @@ const Skills = () => {
         </motion.div>
 
         {/* Skills Card Stack (separate component) */}
-        <SkillsStack sections={skillSections} className="h-[560px] w-full max-w-[1000px] mx-auto mb-24" />
+        <SkillsStack sections={skillSections} className="h-[420px] sm:h-[520px] md:h-[560px] w-full max-w-[1000px] mx-auto mb-24" />
 
         {/* Learning Path */}
         <motion.div

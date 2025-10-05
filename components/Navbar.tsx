@@ -35,6 +35,20 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const original = document.body.style.overflow
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = original || ''
+    }
+    return () => {
+      document.body.style.overflow = original || ''
+    }
+  }, [isOpen])
+
   const navItems = [
     { name: 'Home', href: '#home' },
     { name: 'Skills', href: '#skills' },
@@ -174,7 +188,7 @@ const Navbar = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-[#F9F6F3]/95 dark:bg-[#1C352D]/95 backdrop-blur-md border-b border-[#A6B28B]/20"
+            className="md:hidden bg-[#F9F6F3]/95 dark:bg-[#1C352D]/95 backdrop-blur-md border-b border-[#A6B28B]/20 pb-[max(env(safe-area-inset-bottom,0px),0.5rem)]"
           >
             <div className="px-4 pt-2 pb-4 space-y-2">
               {navItems.map((item) => {

@@ -60,13 +60,13 @@ export default function SkillsStack({ sections, className }: SkillsStackProps) {
   }, [controls])
 
   return (
-    <div ref={stackRef} className={`relative isolate overflow-hidden ${className ?? ''}`}> 
+    <div ref={stackRef} className={`relative isolate overflow-hidden ${className ?? ''}`}>
       <AnimatePresence initial={false}>
       {order.map((idx, depth) => {
         const section = sections[idx]
         // Keep cards centered horizontally; keep vertical position constant
         const translateX = 0
-        const baseOffset = 180
+        const baseOffset = 150
         const translateY = baseOffset
         const scaleStep = 0.06
         const scale = Math.max(1 - depth * scaleStep, 0.82)
@@ -83,7 +83,7 @@ export default function SkillsStack({ sections, className }: SkillsStackProps) {
             onDragStart={isTop ? () => setHintVisible(false) : undefined}
             dragElastic={0.25}
             whileDrag={isTop ? { scale: scale + 0.03, rotate: -2 } : undefined}
-            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] transition-transform duration-300 ${isTop ? 'cursor-grab active:cursor-grabbing pointer-events-auto' : 'pointer-events-none'}`}
+            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[340px] md:w-[360px] transition-transform duration-300 ${isTop ? 'cursor-grab active:cursor-grabbing pointer-events-auto' : 'pointer-events-none'}`}
             style={{
               zIndex,
               transform: `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) scale(${scale})`,
@@ -95,7 +95,7 @@ export default function SkillsStack({ sections, className }: SkillsStackProps) {
             transition={{ type: 'spring', stiffness: 220, damping: 24 }}
             layout
           >
-            <div className={`relative bg-[#A6B28B] rounded-2xl p-6 border border-[#1C352D]/20 ${shadowCls} hover:shadow-2xl transition-all duration-300 h-[440px] flex flex-col`}>
+            <div className={`relative bg-[#A6B28B] rounded-2xl p-5 sm:p-6 border border-[#1C352D]/20 ${shadowCls} hover:shadow-2xl transition-all duration-300 h-[380px] sm:h-[420px] md:h-[440px] flex flex-col`}>
               {isTop && hintVisible && (
                 <motion.div
                   initial={{ opacity: 0, y: -6 }}

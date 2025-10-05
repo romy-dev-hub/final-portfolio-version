@@ -29,12 +29,19 @@ const Hero = () => {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Simulation config
-    const gridSize = 24
-    const baseDotRadius = 3.5
-    const hoverRadius = 80
+    // Simulation config (optimize for mobile)
+    const isMobile = typeof window !== 'undefined' ? window.innerWidth < 640 : false
+    let gridSize = 24
+    let baseDotRadius = 3.5
+    let hoverRadius = 80
     const returnStrength = 0.2
     const friction = 0.8
+
+    if (isMobile) {
+      gridSize = 32 // fewer particles
+      baseDotRadius = 2.4 // smaller dots
+      hoverRadius = 60 // smaller interaction radius
+    }
 
     // State
     let cssWidth = 0

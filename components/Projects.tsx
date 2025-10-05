@@ -24,7 +24,7 @@ const Projects = () => {
       description: "A beautiful web application showcasing various flowers with detailed information, built with modern web technologies and responsive design.",
       technologies: ["React", "Tailwind CSS", "TypeScript", "Responsive Design", "Framer Motion", "Three.js"],
       image: "/images/flowers.png",
-      liveUrl: "https://romy-dev-hub.github.io/flowers-encyclopedia/",
+      liveUrl: "https://flowers-encyclopedia.vercel.app/",
       githubUrl: "https://github.com/romy-dev-hub/flowers-encyclopedia",
       featured: true,
       details: {
@@ -39,7 +39,7 @@ const Projects = () => {
       description: "A comprehensive library management system built with Java and SQL, featuring book tracking, member management, and database operations.",
       technologies: ["Java", "Swing", "SQL", "Oracle DB", "Database Design"],
       image: "/images/database.png",
-      liveUrl: "https://github.com/romy-dev-hub/lib-project-",
+      liveUrl: "#",
       githubUrl: "https://github.com/romy-dev-hub/lib-project-",
       featured: true,
       details: {
@@ -54,7 +54,7 @@ const Projects = () => {
       description: "A community website prototype with user authentication, forums, and interactive features for building online communities.",
       technologies: ["React", "Node.js", "JavaScript", "Framer Motion", "CSS", "Next.js"],
       image: "/images/community.png",
-      liveUrl: "https://romy-dev-hub.github.io/community-prototype-/",
+      liveUrl: "https://community-prototype.vercel.app/",
       githubUrl: "https://github.com/romy-dev-hub/community-prototype-",
       featured: true,
       details: {
@@ -252,11 +252,11 @@ const Projects = () => {
                 </p>
 
                 {/* Technologies */}
-                <div className="flex flex-wrap gap-2 mb-6">
+                <div className="flex gap-2 mb-6 overflow-x-auto no-scrollbar whitespace-nowrap sm:flex-wrap sm:whitespace-normal">
                   {project.technologies.map((tech, techIndex) => (
                     <span
                       key={techIndex}
-                      className={`px-3 py-1 text-sm rounded-full border border-[#A6B28B]/30 ${
+                      className={`px-3 py-1 text-sm rounded-full border border-[#A6B28B]/30 inline-flex items-center shrink-0 ${
                         isDark ? 'bg-transparent text-[#F5C9B0]' : 'bg-[#A6B28B]/20 text-[#1C352D]'
                       }`}
                     >

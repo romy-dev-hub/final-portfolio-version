@@ -10,7 +10,9 @@ export const metadata: Metadata = {
   title: 'Modern Portfolio | Creative Developer',
   description: 'Modern portfolio showcasing creative development projects',
   icons: {
-    icon: '/favicon.png',
+    icon  : [
+      { url: '/favicon.png' }
+    ]
   }
 }
 

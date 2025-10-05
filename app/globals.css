@@ -63,3 +63,12 @@ body {
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+
+/* Hide scrollbar utility (useful for horizontal chip scroll on mobile) */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
